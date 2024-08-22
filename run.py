@@ -19,6 +19,8 @@ import gps_func
 from multiprocessing import Pool, cpu_count, TimeoutError, active_children
 import sys
 import select
+import torch
+from ultralytics import YOLO
 
 # Setting up the logger
 logger = logging.getLogger()
@@ -155,6 +157,9 @@ def main(capture_images=True, num_cores=4):
         while True:
             start_time = time.time()
             
+            # Load the trained model
+            model = YOLO('CropCounter2/model/best.pt')
+            
             longitude, latitude, satellites = gps_func.get_gps()
           
             image_stream, timestamp, metadata = capture.capture_image(picam2, counter, True, longitude, latitude)
@@ -162,7 +167,8 @@ def main(capture_images=True, num_cores=4):
             
             image_metadata[timestamp] = metadata
             
-            result = pool.apply_async(calculations.process_image, (image_stream,), callback=collect_result)
+            # result = pool.apply_async(calculations.process_image, (image_stream,), callback=collect_result)
+            result = pool.apply_async(calculations.inference, (image_stream,), callback=collect_result)
             results.append((timestamp, result))
             
             for timestamp, result in results:
