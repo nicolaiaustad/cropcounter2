@@ -10,3 +10,5 @@ running_images/*
 
 __pycache__/
 
+myenv/
+
