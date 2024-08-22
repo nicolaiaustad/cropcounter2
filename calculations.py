@@ -174,14 +174,12 @@ def process_image(image_stream):
         logging.error(f"Error processing in-memory image: {e}")
         return None
     
-def inference(image_stream, model):
+def inference(image, model):
     try:
-        image_stream.seek(0)  # Ensure the stream is at the start
-        with Image.open(image_stream) as img:
-            # Run inference
-            results = model(img)
-            
-            return len(results[0].boxes)
+        # Run inference
+        results = model.predict(image)
+        
+        return len(results[0].boxes)
     except Exception as e:
-        logging.error(f"Error processing in-memory image: {e}")
+        logging.error(f"Error processing image: {e}")
         return None

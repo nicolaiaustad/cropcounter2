@@ -54,3 +54,4 @@ try:
 finally:
     # Stop the camera
     picam2.stop()
+

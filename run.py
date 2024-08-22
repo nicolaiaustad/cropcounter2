@@ -118,6 +118,8 @@ def main(capture_images=True, num_cores=4):
     camera_config = picam2.create_still_configuration(
         main={
             "size": (2816, 2464),  # Maximum resolution for the camera
+            # "size": (640, 640),  # Maximum resolution for the camera
+            
             "format": "RGB888"  # Use a high-quality format
         },
         controls={
@@ -142,23 +144,24 @@ def main(capture_images=True, num_cores=4):
     zone_number, hemisphere = maps.get_utm_zone(init_lon, init_lat)
     utm_crs = maps.create_utm_proj(zone_number, hemisphere)
     
-    pool = Pool(processes=num_cores)  # Use the specified number of CPU cores
+    pool = Pool(processes=4)  # Use the specified number of CPU cores
     results = []
     image_metadata = {}  # Dictionary to store image metadata
     
     total_images_processed = 0
     processing_start_time = time.time()
 
+    # Load the trained model
+    model = YOLO('/home/nicolaiaustad/Desktop/CropCounter2/model/best.pt')
+  
     
-        
     try:
         counter = 0
         logging.info('Now the While loop starts...')
         while True:
             start_time = time.time()
             
-            # Load the trained model
-            model = YOLO('CropCounter2/model/best.pt')
+           
             
             longitude, latitude, satellites = gps_func.get_gps()
           
@@ -167,55 +170,96 @@ def main(capture_images=True, num_cores=4):
             
             image_metadata[timestamp] = metadata
             
-            # result = pool.apply_async(calculations.process_image, (image_stream,), callback=collect_result)
-            result = pool.apply_async(calculations.inference, (image_stream,), callback=collect_result)
-            results.append((timestamp, result))
+            try:
+                value = calculations.inference(image_stream, model)
+                if value is not None:
+                    longitude, latitude = image_metadata[timestamp]
+                    utm_x, utm_y = maps.transform_to_utm(longitude, latitude, utm_crs)
+                    df_row = maps.find_grid_cell(utm_x, utm_y, grid_size, df_utm)
+                    
+                    if df_row is not None:
+                        if counter % 5 == 0:
+                            logging.info("Good signal. Satellite: "+str(satellites)+" Latitude: " + str(latitude)+ ", Longitude: " + str(longitude))
+                        
+                        if df_utm.at[df_row, "measured"] == False:
+                            df_utm.at[df_row, "measured"] = True
+                            df_utm.at[df_row, "values"] = value
+                        elif df_utm.at[df_row, "measured"] == True:
+                            continue
+                        else:
+                            continue
+                    else:
+                        if counter % 5 == 0:
+                            logging.info("GPS coordinate outside grid. Satellite: "+str(satellites)+" Latitude: " + str(latitude)+ ", Longitude: " + str(longitude))
+                    
+                    total_images_processed += 1
+                del image_metadata[timestamp]
+            except Exception as e:
+                logging.error(f"Error processing image with timestamp {timestamp}: {e}")
             
-            for timestamp, result in results:
-                if result.ready():
-                    try:
-                        value = result.get(timeout=1)
-                        if value is not None:
-                            longitude, latitude = image_metadata[timestamp]
-                            utm_x, utm_y = maps.transform_to_utm(longitude, latitude, utm_crs)
-                            df_row = maps.find_grid_cell(utm_x, utm_y, grid_size, df_utm)
-                            if df_row is not None:
-                                if counter % 5 == 0: 
-                                    logging.info("Good signal. Satellite: "+str(satellites)+" Latitude: " + str(latitude)+ ", Longitude: " + str(longitude))
-                                if df_utm.at[df_row, "measured"] == False: 
-                                    df_utm.at[df_row, "measured"] = True
-                                    df_utm.at[df_row, "values"] = value
-                                elif df_utm.at[df_row, "measured"] == True:
-                                    continue
-                                else:
-                                    continue
-                            else:
-                                if counter % 5 == 0: logging.info("GPS coordinate outside grid. Satellite: "+str(satellites)+" Latitude: " + str(latitude)+ ", Longitude: " + str(longitude))
-                                            #logging.info(f"Processed image with timestamp {timestamp} with value: {value}, GPS: ({latitude}, {longitude})")
-                            total_images_processed += 1
-                        del image_metadata[timestamp]
-                    except TimeoutError:
-                        continue
-                    except Exception as e:
-                        logging.error(f"Error processing image with timestamp {timestamp}: {e}")
-            
-            results = [(timestamp, result) for timestamp, result in results if not result.ready()]
-
-            
-            
+            # Update counter and timing
             counter += 1
             end_time = time.time()
             iteration_time = end_time - start_time
-            #logging.info(f"Iteration {counter} took {iteration_time:.4f} seconds")
+            
             # Calculate and log the images processed per second
             processing_end_time = time.time()
             elapsed_time = processing_end_time - processing_start_time
             if elapsed_time > 0:
                 images_per_second = total_images_processed / elapsed_time
-                logging.info(f"Total processed images: {total_images_processed:.2f}, in Time: {elapsed_time:.2f} ")
-                #print(f"Images processed per second: {images_per_second:.2f}")
+                logging.info(f"Total processed images: {total_images_processed:.2f}, in Time: {elapsed_time:.2f}")
+            
+            # Maintain a 2.5-second loop cycle
+            time.sleep(max(0, 2.5 - iteration_time))
+            # # result = pool.apply_async(calculations.process_image, (image_stream,), callback=collect_result)
+            # result = pool.apply_async(calculations.inference, (image_stream, model,), callback=collect_result)
+            # results.append((timestamp, result))
+            
+            # for timestamp, result in results:
+            #     if result.ready():
+            #         try:
+            #             value = result.get(timeout=1)
+            #             if value is not None:
+            #                 longitude, latitude = image_metadata[timestamp]
+            #                 utm_x, utm_y = maps.transform_to_utm(longitude, latitude, utm_crs)
+            #                 df_row = maps.find_grid_cell(utm_x, utm_y, grid_size, df_utm)
+            #                 if df_row is not None:
+            #                     if counter % 5 == 0: 
+            #                         logging.info("Good signal. Satellite: "+str(satellites)+" Latitude: " + str(latitude)+ ", Longitude: " + str(longitude))
+            #                     if df_utm.at[df_row, "measured"] == False: 
+            #                         df_utm.at[df_row, "measured"] = True
+            #                         df_utm.at[df_row, "values"] = value
+            #                     elif df_utm.at[df_row, "measured"] == True:
+            #                         continue
+            #                     else:
+            #                         continue
+            #                 else:
+            #                     if counter % 5 == 0: logging.info("GPS coordinate outside grid. Satellite: "+str(satellites)+" Latitude: " + str(latitude)+ ", Longitude: " + str(longitude))
+            #                                 #logging.info(f"Processed image with timestamp {timestamp} with value: {value}, GPS: ({latitude}, {longitude})")
+            #                 total_images_processed += 1
+            #             del image_metadata[timestamp]
+            #         except TimeoutError:
+            #             continue
+            #         except Exception as e:
+            #             logging.error(f"Error processing image with timestamp {timestamp}: {e}")
+            
+            # results = [(timestamp, result) for timestamp, result in results if not result.ready()]
+
+            
+            
+            # counter += 1
+            # end_time = time.time()
+            # iteration_time = end_time - start_time
+            # #logging.info(f"Iteration {counter} took {iteration_time:.4f} seconds")
+            # # Calculate and log the images processed per second
+            # processing_end_time = time.time()
+            # elapsed_time = processing_end_time - processing_start_time
+            # if elapsed_time > 0:
+            #     images_per_second = total_images_processed / elapsed_time
+            #     logging.info(f"Total processed images: {total_images_processed:.2f}, in Time: {elapsed_time:.2f} ")
+            #     #print(f"Images processed per second: {images_per_second:.2f}")
                 
-            time.sleep(max(0, 2.5 - iteration_time))  # Maintain a 2.5-second loop cycle
+            # time.sleep(max(0, 2.5 - iteration_time))  # Maintain a 2.5-second loop cycle
             
     except KeyboardInterrupt:
         print("Program interrupted")
@@ -291,6 +335,8 @@ if __name__ == "__main__":
         logging.info("Re-running the script with sudo...")
         try:
             load_settings.subprocess.run(['sudo', 'python3'] + load_settings.sys.argv)
+            # load_settings.subprocess.run(['python3'] + load_settings.sys.argv)
+            
         except KeyboardInterrupt:
             pass
     else:
