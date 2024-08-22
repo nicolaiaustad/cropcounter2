@@ -144,16 +144,22 @@ def main(capture_images=True, num_cores=4):
     zone_number, hemisphere = maps.get_utm_zone(init_lon, init_lat)
     utm_crs = maps.create_utm_proj(zone_number, hemisphere)
     
-    pool = Pool(processes=4)  # Use the specified number of CPU cores
+    pool = Pool(processes=1)  # Use the specified number of CPU cores
     results = []
     image_metadata = {}  # Dictionary to store image metadata
     
     total_images_processed = 0
     processing_start_time = time.time()
 
-    # Load the trained model
-    model = YOLO('/home/nicolaiaustad/Desktop/CropCounter2/model/best.pt')
-  
+    # Load the YOLO model
+    # model = YOLO('/home/nicolaiaustad/Desktop/CropCounter2/model/best.pt')  
+    ncnn_model = YOLO("best_ncnn_model")
+    # # Load a YOLOv8n PyTorch model
+    # model = YOLO('best.pt')
+
+    # # Export the model to NCNN format
+    # model.export(format="ncnn")  # creates 'yolov8n_ncnn_model'
+
     
     try:
         counter = 0
@@ -166,53 +172,12 @@ def main(capture_images=True, num_cores=4):
             longitude, latitude, satellites = gps_func.get_gps()
           
             image_stream, timestamp, metadata = capture.capture_image(picam2, counter, True, longitude, latitude)
-            
+           
             
             image_metadata[timestamp] = metadata
             
-            try:
-                value = calculations.inference(image_stream, model)
-                if value is not None:
-                    longitude, latitude = image_metadata[timestamp]
-                    utm_x, utm_y = maps.transform_to_utm(longitude, latitude, utm_crs)
-                    df_row = maps.find_grid_cell(utm_x, utm_y, grid_size, df_utm)
-                    
-                    if df_row is not None:
-                        if counter % 5 == 0:
-                            logging.info("Good signal. Satellite: "+str(satellites)+" Latitude: " + str(latitude)+ ", Longitude: " + str(longitude))
-                        
-                        if df_utm.at[df_row, "measured"] == False:
-                            df_utm.at[df_row, "measured"] = True
-                            df_utm.at[df_row, "values"] = value
-                        elif df_utm.at[df_row, "measured"] == True:
-                            continue
-                        else:
-                            continue
-                    else:
-                        if counter % 5 == 0:
-                            logging.info("GPS coordinate outside grid. Satellite: "+str(satellites)+" Latitude: " + str(latitude)+ ", Longitude: " + str(longitude))
-                    
-                    total_images_processed += 1
-                del image_metadata[timestamp]
-            except Exception as e:
-                logging.error(f"Error processing image with timestamp {timestamp}: {e}")
             
-            # Update counter and timing
-            counter += 1
-            end_time = time.time()
-            iteration_time = end_time - start_time
-            
-            # Calculate and log the images processed per second
-            processing_end_time = time.time()
-            elapsed_time = processing_end_time - processing_start_time
-            if elapsed_time > 0:
-                images_per_second = total_images_processed / elapsed_time
-                logging.info(f"Total processed images: {total_images_processed:.2f}, in Time: {elapsed_time:.2f}")
-            
-            # Maintain a 2.5-second loop cycle
-            time.sleep(max(0, 2.5 - iteration_time))
-            # # result = pool.apply_async(calculations.process_image, (image_stream,), callback=collect_result)
-            # result = pool.apply_async(calculations.inference, (image_stream, model,), callback=collect_result)
+            # result = pool.apply_async(calculations.inference, (image_stream,), callback=collect_result)
             # results.append((timestamp, result))
             
             # for timestamp, result in results:
@@ -261,6 +226,50 @@ def main(capture_images=True, num_cores=4):
                 
             # time.sleep(max(0, 2.5 - iteration_time))  # Maintain a 2.5-second loop cycle
             
+            try:
+                
+                
+                value = calculations.inference(image_stream, ncnn_model)
+                if value is not None:
+                    longitude, latitude = image_metadata[timestamp]
+                    utm_x, utm_y = maps.transform_to_utm(longitude, latitude, utm_crs)
+                    df_row = maps.find_grid_cell(utm_x, utm_y, grid_size, df_utm)
+                    
+                    if df_row is not None:
+                        if counter % 5 == 0:
+                            logging.info("Good signal. Satellite: "+str(satellites)+" Latitude: " + str(latitude)+ ", Longitude: " + str(longitude))
+                        
+                        if df_utm.at[df_row, "measured"] == False:
+                            df_utm.at[df_row, "measured"] = True
+                            df_utm.at[df_row, "values"] = value
+                        elif df_utm.at[df_row, "measured"] == True:
+                            continue
+                        else:
+                            continue
+                    else:
+                        if counter % 5 == 0:
+                            logging.info("GPS coordinate outside grid. Satellite: "+str(satellites)+" Latitude: " + str(latitude)+ ", Longitude: " + str(longitude))
+                    
+                    total_images_processed += 1
+                del image_metadata[timestamp]
+            except Exception as e:
+                logging.error(f"Error processing image with timestamp {timestamp}: {e}")
+            
+            # Update counter and timing
+            counter += 1
+            end_time = time.time()
+            iteration_time = end_time - start_time
+            
+            # Calculate and log the images processed per second
+            processing_end_time = time.time()
+            elapsed_time = processing_end_time - processing_start_time
+            if elapsed_time > 0:
+                images_per_second = total_images_processed / elapsed_time
+                logging.info(f"Total processed images: {total_images_processed:.2f}, in Time: {elapsed_time:.2f}")
+            
+            # Maintain a 2.5-second loop cycle
+            time.sleep(max(0, 2.5 - iteration_time))
+            #result = pool.apply_async(calculations.process_image, (image_stream,), callback=collect_result)
     except KeyboardInterrupt:
         print("Program interrupted")
         logging.info("Program interrupted")
@@ -268,7 +277,7 @@ def main(capture_images=True, num_cores=4):
         
         print("Closing")
         pool.close()
-        TIMEOUT = 60
+        TIMEOUT = 10
         start = time.time()
         try:
             while time.time() - start <= TIMEOUT:

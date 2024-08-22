@@ -173,12 +173,33 @@ def process_image(image_stream):
     except Exception as e:
         logging.error(f"Error processing in-memory image: {e}")
         return None
-    
+
+from ultralytics import YOLO
+
+# def inference(image_path, model):
+#     # Load the trained model
+#     #model = YOLO('/home/nicolaiaustad/Desktop/CropCounter2/model/best.pt')
+#     try:
+#         print("inside try: "+image_path)
+#         results = model(image_path)
+        
+#         return len(results[0].boxes)
+#     except Exception as e:
+#         logging.error(f"Error processing image: {e}")
+#         return None
+
+
+
 def inference(image, model):
     try:
+        # # Check if the image is a PIL.Image object
+        # if isinstance(image, Image.Image):
+        #     print("Received a PIL Image object")
+        # else:
+        #     print("Received an image path or unsupported type")
+
         # Run inference
-        results = model.predict(image)
-        
+        results = model.predict(image, imgsz=2464)
         return len(results[0].boxes)
     except Exception as e:
         logging.error(f"Error processing image: {e}")

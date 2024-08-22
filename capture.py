@@ -65,7 +65,9 @@ def capture_image(picam2, counter, capture_images, longitude, latitude):
     image_stream.seek(0)  # Rewind the stream to the beginning
     
     # Open the image from the stream
-    image = Image.open(image_stream).convert("RGB")
+    image_temp = Image.open(image_stream).convert("RGB")
+    image = image_temp.copy()
+    
     
     if not capture_images:
         return image, timestamp, (longitude, latitude)
@@ -78,8 +80,46 @@ def capture_image(picam2, counter, capture_images, longitude, latitude):
         jpeg_filename = f"{jpeg_directory}/bygg_image_{timestamp}_lat{latitude}_lon{longitude}.jpeg"
         
         # Save the image as JPEG
-        image.save(jpeg_filename, "JPEG", quality=85)
+        image_temp.save(jpeg_filename, "JPEG", quality=85)
         
         logging.info(f"Saved JPEG {jpeg_filename}")
     
     return image, timestamp, (longitude, latitude)
+
+
+
+# def capture_image(picam2, counter, capture_images, longitude, latitude):
+#     now = datetime.now()
+#     timestamp = now.strftime("%Y%m%d_%H%M%S") + f"_{now.microsecond // 1000:03d}"
+    
+#     image_stream = io.BytesIO()
+#     picam2.capture_file(image_stream, format='png')
+#     image_stream.seek(0)  # Rewind the stream to the beginning
+    
+#     # Create a directory for saving the images if it doesn't exist
+#     image_directory = "/home/nicolaiaustad/Desktop/CropCounter2/running_images"
+#     if not os.path.exists(image_directory):
+#         os.makedirs(image_directory)
+    
+#     # Define the filename and save the image as PNG
+#     image_filename = f"{image_directory}/image_{timestamp}_lat{latitude}_lon{longitude}.png"
+    
+#     with Image.open(image_stream) as img:
+#         img.convert("RGB").save(image_filename, "PNG")
+    
+#     logging.info(f"Captured image saved to {image_filename}")
+    
+#     # Optionally save every 50th image as JPEG
+#     if counter % 50 == 0:
+#         jpeg_directory = "/home/nicolaiaustad/Desktop/CropCounter2/logged_images"
+#         if not os.path.exists(jpeg_directory):
+#             os.makedirs(jpeg_directory)
+#         jpeg_filename = f"{jpeg_directory}/bygg_image_{timestamp}_lat{latitude}_lon{longitude}.jpeg"
+        
+#         # Save the image as JPEG
+#         with Image.open(image_filename) as img:
+#             img.convert("RGB").save(jpeg_filename, "JPEG", quality=85)
+        
+#         logging.info(f"Saved JPEG {jpeg_filename}")
+    
+#     return image_filename, timestamp, (longitude, latitude)
