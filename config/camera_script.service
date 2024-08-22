@@ -1,0 +1,12 @@
+[Unit]
+Description=Camera Script
+
+[Service]
+ExecStart=/usr/bin/python3 /home/nicolaiaustad/Desktop/CropCounter/run.py
+WorkingDirectory=/home/nicolaiaustad/Desktop/CropCounter
+StandardOutput=append:/home/nicolaiaustad/Desktop/CropCounter/run.log
+StandardError=append:/home/nicolaiaustad/Desktop/CropCounter/run.log
+User=nicolaiaustad
+
+[Install]
+WantedBy=multi-user.target

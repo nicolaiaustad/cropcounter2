@@ -1,0 +1,11 @@
+[Unit]
+Description=Dataplicity Agent
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/dataplicity/env/bin/dataplicity
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

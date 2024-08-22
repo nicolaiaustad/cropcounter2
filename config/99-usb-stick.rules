@@ -1,0 +1,2 @@
+ACTION=="add", KERNEL=="sd[a-z][0-9]", SUBSYSTEM=="block", ATTRS{idVendor}=="090c", ATTRS{idProduct}=="1000", RUN+="/bin/sh /home/nicolaiaustad/Desktop/CropCounter/start_camera_relay.sh"
+ACTION=="remove", KERNEL=="sd[a-z][0-9]", SUBSYSTEM=="block", ATTRS{idVendor}=="090c", ATTRS{idProduct}=="1000", RUN+="/bin/sh /home/nicolaiaustad/Desktop/CropCounter/stop_camera.sh"

@@ -1,0 +1,12 @@
+logged_images/*
+
+XXX_last_grid_plot_utm.png
+
+testing_images/*
+
+generated_heatmaps/*
+
+running_images/*
+
+__pycache__/
+
