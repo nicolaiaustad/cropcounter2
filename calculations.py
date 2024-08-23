@@ -199,7 +199,9 @@ def inference(image, model):
         #     print("Received an image path or unsupported type")
 
         # Run inference
-        results = model.predict(image, imgsz=2464)
+        
+        
+        results = model.predict(image, imgsz=2464, conf=0.5)
         return len(results[0].boxes)
     except Exception as e:
         logging.error(f"Error processing image: {e}")

@@ -106,14 +106,14 @@ def shp_to_grid(filename, gridsize):
     plt.grid(True)
     plt.savefig('/home/nicolaiaustad/Desktop/CropCounter2/XXX_last_grid_plot_utm.png')
 
-    #values_gps = np.zeros(len(grid_points_wgs84))
-    values_gps = np.full(len(grid_points), np.nan)
+    values_gps = np.zeros(len(grid_points_wgs84))
+    #values_gps = np.full(len(grid_points), np.nan)
     df_gps = pd.DataFrame(grid_points_wgs84, columns=['x', 'y'])
     df_gps['values'] = values_gps
     df_gps["measured"] = np.zeros(len(grid_points_wgs84), dtype=bool)
     
-    #values_utm = np.zeros(len(grid_points))
-    values_utm = np.full(len(grid_points), np.nan) #Initiliaze with nan in the newest update to make heatmap gray
+    values_utm = np.zeros(len(grid_points))
+    #values_utm = np.full(len(grid_points), np.nan) #Initiliaze with nan in the newest update to make heatmap gray
     df_utm = pd.DataFrame(grid_points, columns=['x', 'y'])
     df_utm['values'] = values_utm
     df_utm["measured"] = np.zeros(len(grid_points), dtype=bool)
@@ -323,30 +323,30 @@ def interpolate_and_smooth(pivot_table, method='cubic', sigma=1, min_value=0, ma
 # print("\nInterpolated DataFrame:")
 # print(interpolated_df)
 
-def enclosed_nan_interpolation(pivot_table):
+def enclosed_zero_interpolation(pivot_table):
     grid_z = pivot_table.values
     
-    def nanmean_enclosed(values):
+    def mean_enclosed(values):
         center_value = values[4]  # The center value in a 3x3 grid (index 4 in a flattened array)
         
-        # If the center value is not NaN, return it as is
-        if not np.isnan(center_value):
+        # If the center value is not 0, return it as is
+        if center_value != 0:
             return center_value
         
-        # Check if the direct neighbors (up, down, left, right) are non-NaN
+        # Check if the direct neighbors (up, down, left, right) are non-Zero
         up = values[1]
         down = values[7]
         left = values[3]
         right = values[5]
         
-        # If all direct neighbors are non-NaN, return their mean
-        if not np.isnan(up) and not np.isnan(down) and not np.isnan(left) and not np.isnan(right):
-            return np.nanmean([up, down, left, right])
+        # If all direct neighbors are non-zero, return their mean
+        if up != 0 and down != 0 and left != 0 and right != 0:
+            return np.mean([up, down, left, right])
         else:
-            return np.nan  # Keep as NaN if not fully enclosed by these neighbors
+            return 0  # Keep as zero if not fully enclosed by these neighbors
 
     # Apply the nanmean_enclosed function using a 3x3 kernel
-    interpolated_grid = generic_filter(grid_z, nanmean_enclosed, size=3, mode='constant', cval=np.nan)
+    interpolated_grid = generic_filter(grid_z, mean_enclosed, size=3, mode='constant', cval=np.nan)
     
     return interpolated_grid
 
@@ -373,7 +373,7 @@ def make_heatmap_and_save(df_data, grid_size, heatmap_output_path, shapefile_out
     
     # Interpolate and smooth the data
     #grid_z = interpolate_and_smooth(pivot_table)
-    grid_z = enclosed_nan_interpolation(pivot_table)  #Updated interpolation to my new function. Unsure if it works, could mess up heatmap generation
+    grid_z = enclosed_zero_interpolation(pivot_table)  #Updated interpolation to my new function. Unsure if it works, could mess up heatmap generation
     
     # Extract the grid points
     unique_x = pivot_table.columns.values
@@ -383,7 +383,7 @@ def make_heatmap_and_save(df_data, grid_size, heatmap_output_path, shapefile_out
     df_data_interpolated = []
     for i in range(len(unique_x)):
         for j in range(len(unique_y)):
-            if not np.isnan(grid_z[j, i]):
+            if grid_z[j, i] != 0:
                 df_data_interpolated.append({
                     'x': unique_x[i],
                     'y': unique_y[j],
@@ -400,8 +400,7 @@ def make_heatmap_and_save(df_data, grid_size, heatmap_output_path, shapefile_out
     
     # Use a colormap with white for NaN values
     cmap = sns.color_palette("RdYlGn", as_cmap=True)
-    cmap.set_bad(color='gray')  # Set color for NaNs to grey. This is an update. Hope it works
-    
+     
     sns.heatmap(grid_z, cmap=cmap, annot=False, fmt="f", cbar=True, xticklabels=False, yticklabels=False, mask=np.isnan(grid_z))
     plt.gca().invert_yaxis()
     plt.title('Heatmap of Values')

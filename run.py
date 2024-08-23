@@ -117,7 +117,7 @@ def main(capture_images=True, num_cores=4):
     
     camera_config = picam2.create_still_configuration(
         main={
-            "size": (2816, 2464),  # Maximum resolution for the camera
+            "size": (2464, 2464),  # Maximum resolution for the camera
             # "size": (640, 640),  # Maximum resolution for the camera
             
             "format": "RGB888"  # Use a high-quality format
@@ -152,14 +152,8 @@ def main(capture_images=True, num_cores=4):
     processing_start_time = time.time()
 
     # Load the YOLO model
-    # model = YOLO('/home/nicolaiaustad/Desktop/CropCounter2/model/best.pt')  
-    ncnn_model = YOLO("best_ncnn_model")
-    # # Load a YOLOv8n PyTorch model
-    # model = YOLO('best.pt')
-
-    # # Export the model to NCNN format
-    # model.export(format="ncnn")  # creates 'yolov8n_ncnn_model'
-
+    
+    ncnn_model = YOLO("best_ncnn_model", task="detect")
     
     try:
         counter = 0
@@ -191,7 +185,7 @@ def main(capture_images=True, num_cores=4):
                         
                         if df_utm.at[df_row, "measured"] == False:
                             df_utm.at[df_row, "measured"] = True
-                            df_utm.at[df_row, "values"] = value
+                            df_utm.at[df_row, "values"] = int(value)
                         elif df_utm.at[df_row, "measured"] == True:
                             continue
                         else:
@@ -233,9 +227,6 @@ def main(capture_images=True, num_cores=4):
         logging.info("Camera stopped and resources cleaned up")
         logging.info("Cleaning up resources...")
       
-        
-        
-        
 
         try:
             maps.make_heatmap_and_save(df_utm, grid_size, f'/tmp/{job_name}.png', f'/tmp/{job_name}', utm_crs)

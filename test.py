@@ -4,7 +4,23 @@
 # from ultralytics import YOLO
 # import time
 # from multiprocessing import Pool
+from ultralytics import YOLO
 
+# model = YOLO("best.pt")
+# model.export(format="onnx", dynamic=True, int8=True)
+# onnx_model = YOLO("best.onnx")
+# results = onnx_model.predict("logged_images/havre_image_20240814_135240_216_lat63.844473_lon11.383946.jpeg", imgsz=2816)
+# results[0].save("output_with_boxes.jpg")
+
+# model = YOLO('best.pt')
+# model.export(format="ncnn", half=True, imgsz=2464)
+new_ncnn_model = YOLO("best_ncnn_model", task="detect")
+results = new_ncnn_model.predict("logged_images/01Move_G3_E500_S4_hvete_20240805_174334.png", imgsz=2464, conf=0.5)
+results[0].save("output_with_boxes_ncnn.jpg")
+
+new_ncnn_model = YOLO("best.pt", task="detect")
+results = new_ncnn_model.predict("logged_images/01Move_G3_E500_S4_hvete_20240805_174334.png", imgsz=2464, conf=0.5)
+results[0].save("output_with_boxes_best.jpg")
 # # Load the YOLO model
 # model = YOLO('/home/nicolaiaustad/Desktop/CropCounter2/model/best.pt')
 
@@ -76,79 +92,79 @@
 #     finally:
 #         picam2.stop()  # Stop the camera when done
 
-import os
-import time
-from PIL import Image
-from ultralytics import YOLO
-from multiprocessing import Pool, cpu_count
-import logging
+# import os
+# import time
+# from PIL import Image
+# from ultralytics import YOLO
+# from multiprocessing import Pool, cpu_count
+# import logging
 
-ncnn_model = YOLO("best_ncnn_model")
+# ncnn_model = YOLO("best_ncnn_model")
 
-# Directory containing images
-image_dir = '/home/nicolaiaustad/Desktop/CropCounter2/running_images'
+# # Directory containing images
+# image_dir = '/home/nicolaiaustad/Desktop/CropCounter2/running_images'
 
-# Filter and get all image files in the directory
-image_files = [os.path.join(image_dir, f) for f in os.listdir(image_dir) if f.endswith(('.jpg', '.jpeg', '.png'))]
+# # Filter and get all image files in the directory
+# image_files = [os.path.join(image_dir, f) for f in os.listdir(image_dir) if f.endswith(('.jpg', '.jpeg', '.png'))]
 
-def run_single_inference(ncnn_model, image_files):
-    """Run inference on images one by one and measure time."""
-    start_time = time.time()
+# def run_single_inference(ncnn_model, image_files):
+#     """Run inference on images one by one and measure time."""
+#     start_time = time.time()
     
-    for image_file in image_files:
-        image = Image.open(image_file).convert("RGB")
-        results = ncnn_model.predict(image, imgsz=2816)
-        print(f"Processed {image_file}: {len(results[0].boxes)} boxes detected")
+#     for image_file in image_files:
+#         image = Image.open(image_file).convert("RGB")
+#         results = ncnn_model.predict(image, imgsz=2816)
+#         print(f"Processed {image_file}: {len(results[0].boxes)} boxes detected")
     
-    end_time = time.time()
-    total_time = end_time - start_time
-    return total_time
+#     end_time = time.time()
+#     total_time = end_time - start_time
+#     return total_time
 
-def process_image_batch(ncnn_model, batch_files):
-    """Process a batch of images and return the results."""
-    results = []
-    for image_file in batch_files:
-        image = Image.open(image_file).convert("RGB")
-        result = ncnn_model.predict(image, imgsz=2816)
-        results.append((image_file, result))
-    return results
+# def process_image_batch(ncnn_model, batch_files):
+#     """Process a batch of images and return the results."""
+#     results = []
+#     for image_file in batch_files:
+#         image = Image.open(image_file).convert("RGB")
+#         result = ncnn_model.predict(image, imgsz=2816)
+#         results.append((image_file, result))
+#     return results
 
-def run_batch_inference(ncnn_model, image_files, batch_size=6):
-    """Run inference on images in smaller batches and measure time."""
-    start_time = time.time()
-    pool = Pool(processes=cpu_count())
-    results = []
+# def run_batch_inference(ncnn_model, image_files, batch_size=6):
+#     """Run inference on images in smaller batches and measure time."""
+#     start_time = time.time()
+#     pool = Pool(processes=cpu_count())
+#     results = []
     
-    for i in range(0, len(image_files), batch_size):
-        batch_files = image_files[i:i + batch_size]
-        result = pool.apply_async(process_image_batch, (ncnn_model, batch_files))
-        results.append(result)
+#     for i in range(0, len(image_files), batch_size):
+#         batch_files = image_files[i:i + batch_size]
+#         result = pool.apply_async(process_image_batch, (ncnn_model, batch_files))
+#         results.append(result)
     
-    pool.close()
-    pool.join()
+#     pool.close()
+#     pool.join()
 
-    for result in results:
-        batch_results = result.get()
-        for image_file, res in batch_results:
-            print(f"Processed {image_file}: {len(res[0].boxes)} boxes detected")
+#     for result in results:
+#         batch_results = result.get()
+#         for image_file, res in batch_results:
+#             print(f"Processed {image_file}: {len(res[0].boxes)} boxes detected")
     
-    end_time = time.time()
-    total_time = end_time - start_time
-    return total_time
+#     end_time = time.time()
+#     total_time = end_time - start_time
+#     return total_time
 
-if __name__ == "__main__":
-    # Ensure there are images to process
-    if not image_files:
-        print("No images found in the directory. Please add images to the folder and try again.")
-    else:
-        # Run batch inference timing
-        batch_inference_time = run_batch_inference(ncnn_model, image_files)
-        print(f"Total time for batch inference: {batch_inference_time:.2f} seconds")
+# if __name__ == "__main__":
+#     # Ensure there are images to process
+#     if not image_files:
+#         print("No images found in the directory. Please add images to the folder and try again.")
+#     else:
+#         # Run batch inference timing
+#         batch_inference_time = run_batch_inference(ncnn_model, image_files)
+#         print(f"Total time for batch inference: {batch_inference_time:.2f} seconds")
         
-        # Run single inference timing
-        single_inference_time = run_single_inference(ncnn_model, image_files)
-        print(f"Total time for single image inference: {single_inference_time:.2f} seconds")
+#         # Run single inference timing
+#         single_inference_time = run_single_inference(ncnn_model, image_files)
+#         print(f"Total time for single image inference: {single_inference_time:.2f} seconds")
         
-        # Compare the results
-        print("\nComparison:")
-        print(f"Single image inference took {single_inference_time:.2f} seconds")
+#         # Compare the results
+#         print("\nComparison:")
+#         print(f"Single image inference took {single_inference_time:.2f} seconds")
