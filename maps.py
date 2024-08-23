@@ -140,104 +140,6 @@ def find_grid_cell(longitude, latitude, grid_size, df):
         return row.index[0]
     return None
 
-# def save_heatmap_to_shapefile(df_data, grid_size, output_path, crs):
-#     geometry = [Point(xy) for xy in zip(df_data['x'], df_data['y'])]
-#     gdf = gpd.GeoDataFrame(df_data, crs=crs, geometry=geometry)
-#     gdf_wgs84 = gdf.to_crs(epsg=4326)
-#     gdf_wgs84.to_file(output_path, driver='ESRI Shapefile')
-#     print(f"Shapefile saved to {output_path}")
-
-# def make_heatmap_and_save(df_data, grid_size, heatmap_output_path, shapefile_output_path, crs):
-#     pivot_table = df_data.pivot(index='y', columns='x', values='values')
-#     plt.figure(figsize=(12, 10))
-#     sns.heatmap(pivot_table, cmap='RdYlGn', annot=False, fmt="f", cbar=True)
-#     xticks = np.arange(df_data['x'].min(), df_data['x'].max() + grid_size, grid_size)
-#     yticks = np.arange(df_data['y'].min(), df_data['y'].max() + grid_size, grid_size)
-#     plt.gca().set_xticks(np.arange(len(xticks)))
-#     plt.gca().set_yticks(np.arange(len(yticks)))
-#     plt.gca().set_xticklabels([f'{int(x)}' for x in xticks], rotation=45, ha='right')
-#     plt.gca().set_yticklabels([f'{int(y)}' for y in yticks])
-#     plt.gca().invert_yaxis()
-#     plt.title('Heatmap of Values')
-#     plt.xlabel('UTM X Coordinate')
-#     plt.ylabel('UTM Y Coordinate')
-#     plt.savefig(heatmap_output_path)
-#     plt.savefig("/home/nicolaiaustad/Desktop/heatmap16jul.png")
-#     plt.close()
-#     print(f"Heatmap saved to {heatmap_output_path}")
-#     save_heatmap_to_shapefile(df_data, grid_size, shapefile_output_path, crs)
-
-# import numpy as np
-# import matplotlib.pyplot as plt
-# import seaborn as sns
-# import geopandas as gpd
-# from shapely.geometry import Point
-# from scipy.interpolate import griddata
-# from scipy.ndimage import gaussian_filter
-
-# def save_heatmap_to_shapefile(df_data, grid_size, output_path, crs):
-#     geometry = [Point(xy) for xy in zip(df_data['x'], df_data['y'])]
-#     gdf = gpd.GeoDataFrame(df_data, crs=crs, geometry=geometry)
-#     gdf_wgs84 = gdf.to_crs(epsg=4326)
-#     gdf_wgs84.to_file(output_path, driver='ESRI Shapefile')
-#     print(f"Shapefile saved to {output_path}")
-
-# def interpolate_and_smooth(df_data, grid_size):
-#     # Extract x, y, and values from the dataframe
-#     x = df_data['x'].values
-#     y = df_data['y'].values[::-1]
-#     values = df_data['values'].values
-    
-#     # Create grid
-#     grid_x, grid_y = np.mgrid[x.min():x.max():grid_size*1j, y.min():y.max():grid_size*1j]
-    
-#     # Interpolate missing values
-#     grid_z = griddata((x, y), values, (grid_x, grid_y), method='cubic')
-    
-#     # Handle outliers by replacing them with the median or a capped value
-#     z_median = np.nanmedian(grid_z)
-#     z_std = np.nanstd(grid_z)
-#     outlier_threshold = 3 * z_std
-#     grid_z = np.where(np.abs(grid_z - z_median) > outlier_threshold, z_median, grid_z)
-    
-#     # Apply Gaussian filter for smoothing
-#     grid_z = gaussian_filter(grid_z, sigma=1)
-    
-#     return grid_x, grid_y, grid_z
-
-# def make_heatmap_and_save(df_data, grid_size, heatmap_output_path, shapefile_output_path, crs):
-#     # Interpolate and smooth the data
-#     grid_x, grid_y, grid_z = interpolate_and_smooth(df_data, grid_size)
-    
-#     # Prepare data for saving to shapefile
-#     df_data_interpolated = []
-#     for i in range(grid_x.shape[0]):
-#         for j in range(grid_x.shape[1]):
-#             df_data_interpolated.append({
-#                 'x': grid_x[i, j],
-#                 'y': grid_y[i, j],
-#                 'values': grid_z[i, j]
-#             })
-#     df_data_interpolated = pd.DataFrame(df_data_interpolated)
-    
-#     # Create and save the heatmap
-#     plt.figure(figsize=(12, 10))
-#     sns.heatmap(grid_z.T, cmap='RdYlGn', annot=False, fmt="f", cbar=True, xticklabels=False, yticklabels=False)
-#     plt.title('Heatmap of Values')
-#     plt.xlabel('UTM X Coordinate')
-#     plt.ylabel('UTM Y Coordinate')
-#     plt.savefig(heatmap_output_path)
-#     plt.savefig("/home/nicolaiaustad/Desktop/heatmap16jul.png")
-#     plt.close()
-#     print(f"Heatmap saved to {heatmap_output_path}")
-    
-#     # Save to shapefile
-#     save_heatmap_to_shapefile(df_data_interpolated, grid_size, shapefile_output_path, crs)
-
-# # Example usage:
-# # df_data should be a DataFrame with columns: 'x', 'y', 'values'
-# # make_heatmap_and_save(df_data, grid_size=0.1, heatmap_output_path='heatmap.png', shapefile_output_path='heatmap.shp', crs='epsg:32633')
-
 
 
 import numpy as np
@@ -249,6 +151,7 @@ from shapely.geometry import Point
 from scipy.ndimage import gaussian_filter
 import numpy as np
 from scipy.ndimage import generic_filter
+from scipy.spatial import distance_matrix
 
 def save_heatmap_to_shapefile(df_data, output_path, crs):
     geometry = [Point(xy) for xy in zip(df_data['x'], df_data['y'])]
@@ -258,155 +161,85 @@ def save_heatmap_to_shapefile(df_data, output_path, crs):
     #print(f"Shapefile saved to {output_path}")
     logging.info(f"Shapefile saved to {output_path}")
 
-def interpolate_and_smooth(pivot_table, method='cubic', sigma=1, min_value=0, max_value=500):
-    # Interpolate missing values in the pivot table
-    grid_z = pivot_table.values
-    mask = np.isnan(grid_z)
-    
-    # Use the chosen method for interpolation
-    grid_z = np.where(mask, np.nanmedian(grid_z), grid_z)
-    
-    # Handle outliers by clipping values to the desired range
-    grid_z = np.clip(grid_z, min_value, max_value)
-    
-    # Apply Gaussian filter for smoothing
-    #grid_z = gaussian_filter(grid_z, sigma=sigma)  #Removed gaussian blurring
-    
-    # Restore the mask to keep original boundaries
-    grid_z[mask] = np.nan
-    
-    
-    return grid_z
 
-# def enclosed_nan_interpolation(pivot_table):
-#     grid_z = pivot_table.values
-#     mask = np.isnan(grid_z)
-    
-#     def nanmean_enclosed(values):
-#         center_value = values[len(values) // 2]
-        
-#         # If the center value is not NaN, return it as is
-#         if not np.isnan(center_value):
-#             return center_value
-        
-#         # Check if all surrounding values are non-NaN
-#         surrounding_values = np.array(values)
-#         surrounding_values = np.delete(surrounding_values, len(values) // 2)  # Remove center value
-#         if np.all(~np.isnan(surrounding_values)):
-#             return np.nanmean(surrounding_values)
-#         else:
-#             return np.nan  # Keep as NaN if not fully enclosed
 
-#     # Apply the nanmean_enclosed function using a 3x3 kernel
-#     interpolated_grid = generic_filter(grid_z, nanmean_enclosed, size=3, mode='constant', cval=np.nan)
-    
-#     return interpolated_grid
+import numpy as np
+from scipy.ndimage import gaussian_filter
 
-# # Create a test DataFrame with X, Y, and Z columns
-# test_df = pd.DataFrame({
-#     'X': [0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2],
-#     'Y': [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3],
-#     'Z': [1.0, 2.0, 3.0, 4.0, np.nan, 6.0, 7.0, 8.0, 15, np.nan, 12.0, np.nan]
-# })
-
-# # Pivot the DataFrame to create a 2D grid
-# pivot_table = test_df.pivot(index='Y', columns='X', values='Z')
-
-# # Apply the enclosed_nan_interpolation function
-# interpolated_result = enclosed_nan_interpolation(pivot_table)
-# interpolated_df = pd.DataFrame(interpolated_result, columns=pivot_table.columns, index=pivot_table.index)
-
-# # Print the original and interpolated DataFrames
-# print("Original DataFrame:")
-# print(pivot_table)
-
-# print("\nInterpolated DataFrame:")
-# print(interpolated_df)
-
-def enclosed_zero_interpolation(pivot_table):
+def custom_interpolation(pivot_table, sigma=1, min_value=0, max_value=500):
     grid_z = pivot_table.values
     
-    def mean_enclosed(values):
-        center_value = values[4]  # The center value in a 3x3 grid (index 4 in a flattened array)
+    # Step 1: Set up a custom function for interpolation
+    def mean_if_measured(values):
+        center_value = values[4]  # Center value in the 3x3 grid
         
-        # If the center value is not 0, return it as is
+        # If the center pixel is non-zero, keep it as is
         if center_value != 0:
             return center_value
         
-        # Check if the direct neighbors (up, down, left, right) are non-Zero
-        up = values[1]
-        down = values[7]
-        left = values[3]
-        right = values[5]
+        # Get direct neighbors (up, down, left, right)
+        neighbors = values[[1, 7, 3, 5]]  # Get values from the positions [up, down, left, right]
         
-        # If all direct neighbors are non-zero, return their mean
-        if up != 0 and down != 0 and left != 0 and right != 0:
-            return np.mean([up, down, left, right])
-        else:
-            return 0  # Keep as zero if not fully enclosed by these neighbors
+        # Consider only non-zero neighbors
+        non_zero_neighbors = neighbors[neighbors != 0]
+        
+        # If there are non-zero neighbors, return their mean
+        if len(non_zero_neighbors) > 0:
+            return np.mean(non_zero_neighbors)
+        
+        # If no non-zero neighbors, return 0
+        return 0
 
-    # Apply the nanmean_enclosed function using a 3x3 kernel
-    interpolated_grid = generic_filter(grid_z, mean_enclosed, size=3, mode='constant', cval=np.nan)
-    
-    return interpolated_grid
+    # Step 2: Apply the custom filter
+    interpolated_grid = generic_filter(grid_z, mean_if_measured, size=3, mode='constant', cval=0)
 
-# # Create a test DataFrame with X, Y, and Z columns
-# test_df = pd.DataFrame({
-#     'X': [0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2],
-#     'Y': [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3],
-#     'Z': [1.0, 2.0, 3.0, 4.0, np.nan, 6.0, 7.0, 8.0, np.nan, np.nan, 12.0, 15]
-# })
+    # Step 3: Clip to avoid negative values and apply smoothing
+    interpolated_grid = np.clip(interpolated_grid, min_value, max_value)
+    smoothed_grid = gaussian_filter(interpolated_grid, sigma=sigma)
 
-# # Pivot the DataFrame to create a 2D grid
-# pivot_table = test_df.pivot(index='Y', columns='X', values='Z')
+    return smoothed_grid
 
-# # Apply the enclosed_nan_interpolation function
-# interpolated_result = enclosed_nan_interpolation(pivot_table)
-# interpolated_df = pd.DataFrame(interpolated_result, columns=pivot_table.columns, index=pivot_table.index)
 
 
 
 
 def make_heatmap_and_save(df_data, grid_size, heatmap_output_path, shapefile_output_path, crs):
-    # Create pivot table
-    pivot_table = df_data.pivot(index='y', columns='x', values='values')
+    # Create pivot table for 'values'
+    pivot_table_values = df_data.pivot(index='y', columns='x', values='values')
+
+    # Perform interpolation and smoothing
+    smoothed_grid = custom_interpolation(pivot_table_values)
+
+    # Extract the grid points for saving
+    unique_x = pivot_table_values.columns.values
+    unique_y = pivot_table_values.index.values
     
-    # Interpolate and smooth the data
-    #grid_z = interpolate_and_smooth(pivot_table)
-    grid_z = enclosed_zero_interpolation(pivot_table)  #Updated interpolation to my new function. Unsure if it works, could mess up heatmap generation
-    
-    # Extract the grid points
-    unique_x = pivot_table.columns.values
-    unique_y = pivot_table.index.values
-    
-    # Prepare data for saving to shapefile
     df_data_interpolated = []
-    for i in range(len(unique_x)):
-        for j in range(len(unique_y)):
-            if grid_z[j, i] != 0:
+    for i in range(len(unique_y)):
+        for j in range(len(unique_x)):
+            if smoothed_grid[i, j] != 0:
                 df_data_interpolated.append({
-                    'x': unique_x[i],
-                    'y': unique_y[j],
-                    'values': grid_z[j, i]  # Note the order: grid_z is transposed
+                    'x': unique_x[j],
+                    'y': unique_y[i],
+                    'values': smoothed_grid[i, j]
                 })
     df_data_interpolated = pd.DataFrame(df_data_interpolated)
     
-    save_directory = "/home/dataplicity/remote/"
-    if not os.path.exists(save_directory):
-        os.makedirs(save_directory)
-        
-    # Create and save the heatmap
+    # Save heatmap
     plt.figure(figsize=(12, 10))
-    
-    # Use a colormap with white for NaN values
     cmap = sns.color_palette("RdYlGn", as_cmap=True)
-     
-    sns.heatmap(grid_z, cmap=cmap, annot=False, fmt="f", cbar=True, xticklabels=False, yticklabels=False, mask=np.isnan(grid_z))
+    # cmap.set_bad(color='gray')
+    
+    sns.heatmap(smoothed_grid, cmap=cmap, annot=False, fmt="f", cbar=True, xticklabels=False, yticklabels=False)
     plt.gca().invert_yaxis()
     plt.title('Heatmap of Values')
     plt.xlabel('UTM X Coordinate')
     plt.ylabel('UTM Y Coordinate')
-    plt.savefig(heatmap_output_path) #Save to usb stick
+    plt.savefig(heatmap_output_path)
+    save_directory = "/home/dataplicity/remote/"
+    if not os.path.exists(save_directory):
+        os.makedirs(save_directory)
+        
     # Ensure the heatmap_output_path does not start with /tmp/
     heatmap_output_path = heatmap_output_path.lstrip("/tmp/")
     plt.savefig("/home/nicolaiaustad/Desktop/CropCounter2/generated_heatmaps/"+heatmap_output_path)
@@ -414,11 +247,93 @@ def make_heatmap_and_save(df_data, grid_size, heatmap_output_path, shapefile_out
     plt.savefig(f"{save_directory}"+heatmap_output_path)
     plt.close()
     logging.info(f"Heatmap saved to {heatmap_output_path}")
-    #print(f"Heatmap saved to {heatmap_output_path}")
 
     # Save to shapefile
     save_heatmap_to_shapefile(df_data_interpolated, shapefile_output_path, crs)
+    
+    
+    
 
-# Example usage:
-# df_data should be a DataFrame with columns: 'x', 'y', 'values'
-# make_heatmap_and_save(df_data, grid_size=0.1, heatmap_output_path='heatmap.png', shapefile_output_path='heatmap.shp', crs='epsg:32633')
+def inverse_distance_weighting(x, y, values, xi, yi, power=2):
+    # Break into smaller chunks if needed
+    chunk_size = 10000  # Adjust this based on your memory
+    interpolated_values = np.zeros(xi.shape[0])
+
+    for start in range(0, xi.shape[0], chunk_size):
+        end = min(start + chunk_size, xi.shape[0])
+        dist = distance_matrix(np.c_[x, y], np.c_[xi[start:end], yi[start:end]])
+        
+        # Replace zero distances with a small value to avoid division by zero
+        dist[dist == 0] = 1e-10
+        
+        weights = 1 / np.power(dist, power)
+        weights /= weights.sum(axis=0)
+        
+        interpolated_values[start:end] = np.dot(weights.T, values)
+    
+    return interpolated_values
+
+
+
+def generate_idw_heatmap(df_data, grid_size, heatmap_output_path, shapefile_output_path, crs, sigma=1, power=2):
+    # Extract the 'x', 'y', and 'values' directly from the DataFrame
+    x = df_data['x'].values
+    y = df_data['y'].values
+    values = df_data['values'].values
+    
+
+    # Ensure that there are enough points to interpolate
+    if len(x) == 0 or len(y) == 0 or len(values) == 0:
+        logging.warning("No valid data points for interpolation. Skipping IDW interpolation.")
+        return
+    
+    # Create a grid of points for the heatmap
+    xi, yi = np.meshgrid(np.arange(x.min(), x.max(), grid_size),
+                         np.arange(y.min(), y.max(), grid_size))
+    
+    if xi.size == 0 or yi.size == 0:
+        logging.warning("Grid size is too small. Skipping IDW interpolation.")
+        return
+    
+    # Flatten the grid to pass it to the IDW function
+    xi_flat = xi.ravel()
+    yi_flat = yi.ravel()
+    
+    # Apply IDW interpolation with chunking
+    interpolated_values = inverse_distance_weighting(x, y, values, xi_flat, yi_flat, power=power)
+    
+    # Reshape the interpolated values back to the grid shape
+    grid_z = interpolated_values.reshape(xi.shape)
+    
+    # Apply Gaussian smoothing
+    grid_z = gaussian_filter(grid_z, sigma=sigma)
+    
+    #
+    # Create and save the heatmap
+    plt.figure(figsize=(12, 10))
+    
+    cmap = sns.color_palette("RdYlGn", as_cmap=True)
+    
+    sns.heatmap(grid_z, cmap=cmap, annot=False, fmt="f", cbar=True, 
+                xticklabels=False, yticklabels=False,  mask=np.isnan(grid_z))
+    plt.gca().invert_yaxis()
+    plt.title('IDW Heatmap of Values')
+    plt.xlabel('UTM X Coordinate')
+    plt.ylabel('UTM Y Coordinate')
+    
+    # Save the heatmap
+    plt.savefig(heatmap_output_path)
+    
+    save_directory = "/home/dataplicity/remote/"
+    if not os.path.exists(save_directory):
+        os.makedirs(save_directory)
+    # Ensure the heatmap_output_path does not start with /tmp/
+    heatmap_output_path = heatmap_output_path.lstrip("/tmp/")
+    plt.savefig("/home/nicolaiaustad/Desktop/CropCounter2/generated_heatmaps/"+heatmap_output_path)
+     
+    plt.savefig(f"{save_directory}"+heatmap_output_path)
+    plt.close()
+    logging.info(f"Heatmap saved to {heatmap_output_path}")
+    
+    # Save the interpolated data to a shapefile (optional)
+    save_heatmap_to_shapefile(pd.DataFrame({'x': xi_flat, 'y': yi_flat, 'values': interpolated_values}), shapefile_output_path, crs)

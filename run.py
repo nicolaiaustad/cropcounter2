@@ -229,13 +229,18 @@ def main(capture_images=True, num_cores=4):
       
 
         try:
-            maps.make_heatmap_and_save(df_utm, grid_size, f'/tmp/{job_name}.png', f'/tmp/{job_name}', utm_crs)
+            maps.make_heatmap_and_save(df_utm, grid_size, f'/tmp/{job_name}_custom.png', f'/tmp/{job_name}_custom', utm_crs) #Creates custom smoothed heatmap
+            maps.generate_idw_heatmap(df_utm, grid_size, f'/tmp/{job_name}_idw.png', f'/tmp/{job_name}_idw', utm_crs) #Creates IDW heatmap
+            
             heatmap_folder = os.path.join(mount_point, 'generated_heatmaps')
             generated_shapefiles_folder = os.path.join(mount_point, 'generated_shapefiles')
             os.makedirs(heatmap_folder, exist_ok=True)
             os.makedirs(generated_shapefiles_folder, exist_ok=True)
-            load_settings.copy_files(f'/tmp/{job_name}.png', heatmap_folder)
-            load_settings.copy_files(f'/tmp/{job_name}', generated_shapefiles_folder)
+            load_settings.copy_files(f'/tmp/{job_name}_custom.png', heatmap_folder)
+            load_settings.copy_files(f'/tmp/{job_name}_custom', generated_shapefiles_folder)
+            
+            load_settings.copy_files(f'/tmp/{job_name}_idw.png', heatmap_folder)
+            load_settings.copy_files(f'/tmp/{job_name}_idw', generated_shapefiles_folder)
             
             time.sleep(4)
             load_settings.unmount_usb(mount_point)
