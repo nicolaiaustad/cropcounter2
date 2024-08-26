@@ -139,7 +139,7 @@ def main(capture_images=True, num_cores=4):
     picam2.start()
     time.sleep(2)  # Allow the camera to warm up
 
-    grid_points, grid_gps, df_utm, df_gps, inside_points, bound = maps.shp_to_grid(shapefile_path, grid_size)
+    grid_points, grid_gps, df_utm, df_gps, bound = maps.shp_to_grid(shapefile_path, grid_size)
     init_lon = grid_gps[0,0]
     init_lat = grid_gps[0,1]
     zone_number, hemisphere = maps.get_utm_zone(init_lon, init_lat)
@@ -213,8 +213,7 @@ def main(capture_images=True, num_cores=4):
                 except Exception as e:
                     logging.error(f"Error saving heatmap checkpoint: {e}")
                     
-            print("df_utm after iteration")
-            print(df_utm.shape) 
+          
             # Update counter and timing
             counter += 1
             end_time = time.time()
@@ -246,7 +245,7 @@ def main(capture_images=True, num_cores=4):
 
         try:
             maps.make_heatmap_and_save(df_utm, grid_size, f'/tmp/{job_name}_custom.png', f'/tmp/{job_name}_custom', utm_crs) #Creates custom smoothed heatmap
-            maps.generate_idw_heatmap(df_utm, inside_points, bound, grid_size, f'/tmp/{job_name}_idw.png', f'/tmp/{job_name}_idw', utm_crs) #Creates IDW heatmap
+            maps.generate_idw_heatmap(df_utm, bound, grid_size, f'/tmp/{job_name}_idw.png', f'/tmp/{job_name}_idw', utm_crs) #Creates IDW heatmap
             
             heatmap_folder = os.path.join(mount_point, 'generated_heatmaps')
             generated_shapefiles_folder = os.path.join(mount_point, 'generated_shapefiles')
@@ -255,8 +254,8 @@ def main(capture_images=True, num_cores=4):
             load_settings.copy_files(f'/tmp/{job_name}_custom.png', heatmap_folder)
             load_settings.copy_files(f'/tmp/{job_name}_custom', generated_shapefiles_folder)
             
-            #load_settings.copy_files(f'/tmp/{job_name}_idw.png', heatmap_folder)
-            #load_settings.copy_files(f'/tmp/{job_name}_idw', generated_shapefiles_folder)
+            load_settings.copy_files(f'/tmp/{job_name}_idw.png', heatmap_folder)
+            load_settings.copy_files(f'/tmp/{job_name}_idw', generated_shapefiles_folder)
             
             time.sleep(4)
             load_settings.unmount_usb(mount_point)
