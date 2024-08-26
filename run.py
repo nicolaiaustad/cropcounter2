@@ -232,7 +232,7 @@ def main(capture_images=True, num_cores=4):
        
         logging.info("Camera stopped and resources cleaned up")
         logging.info("Cleaning up resources...")
-        print("test")
+        
 
         try:
             maps.make_heatmap_and_save(df_utm, grid_size, f'/tmp/{job_name}_custom.png', f'/tmp/{job_name}_custom', utm_crs) #Creates custom smoothed heatmap
