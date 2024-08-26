@@ -62,7 +62,7 @@ def get_gps():
         satellites= latest_gps_data["satellites"]
         speed = latest_gps_data["speed_knots"]
         timestamp = latest_gps_data["timestamp"]
-        return longitude, latitude, satellites
+        return longitude, latitude, satellites, speed
     else:
-        return 0,0, latest_gps_data["satellites"]  #Long and lat = 0  means not valid gps_coordiantes retrieved
+        return 0,0, latest_gps_data["satellites"], 999  #Long and lat = 0  means not valid gps_coordiantes retrieved
 
