@@ -6,46 +6,7 @@ import os
 import logging
 import io
 
-# ### Blob detection method
-# def blob(image, k, b, circ1, circ2, iner1, iner2, conv1, conv2, area_min, area_max):
-#     # Convert the image to grayscale
-#     gray = cv2.imread(image, cv2.IMREAD_GRAYSCALE)
 
-#     blurred_image = cv2.GaussianBlur(gray, (k, k), 0)  #Apply gaussian blur to the image
-    
-#     thresh = cv2.adaptiveThreshold(blurred_image,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,b,2) #Apply adaptive gaussian thresholding to the image
-    
-#     # Set up the SimpleBlobDetector parameters
-#     params = cv2.SimpleBlobDetector_Params()
-
-#     # Filter by circularity
-#     params.filterByCircularity = True
-#     params.minCircularity = circ1 # Adjust as needed
-#     params.maxCircularity = circ2
-
-#     # Filter by inertia
-#     params.filterByInertia = True
-#     params.minInertiaRatio = iner1  # Adjust as needed
-#     params.maxInertiaRatio = iner2
-    
-#     # Filter by Convexity
-#     params.filterByConvexity = True
-#     params.minConvexity = conv1
-#     params.maxConvexity = conv2
-
-#     # Filter by area
-#     params.filterByArea = True
-#     params.minArea = area_min # Adjust as needed
-#     params.maxArea = area_max  # Adjust as needed
-    
-#     # Create a detector with the parameters
-#     detector = cv2.SimpleBlobDetector_create(params)
-
-#     # Detect blobs
-#     keypoints = detector.detect(thresh)
-   
-
-#     return len(keypoints)
 
 def blob(image_stream, k, b, circ1, iner1, conv1, area_min, area_max):
     # Ensure the stream is at the start
@@ -59,18 +20,6 @@ def blob(image_stream, k, b, circ1, iner1, conv1, area_min, area_max):
     
     # Convert the image to grayscale
     gray = cv2.cvtColor(cv_image, cv2.COLOR_RGB2GRAY)
-
-    # # Apply Gaussian blur to the image
-    # blurred_image = cv2.GaussianBlur(gray, (k, k), 0)
-    
-    # # Apply adaptive Gaussian thresholding to the image
-    # thresh = cv2.adaptiveThreshold(blurred_image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, b, 3)
-    
-    # # Invert the thresholded image to make white regions black and black regions white
-    # inverted_thresh = cv2.bitwise_not(thresh)
-    
-    
-    
     
     # Convert the image to grayscale
     gray = cv2.cvtColor(cv_image, cv2.COLOR_RGB2GRAY)
@@ -137,13 +86,6 @@ def blob(image_stream, k, b, circ1, iner1, conv1, area_min, area_max):
 
     return len(keypoints)
 
-    
-# def AI_calculation(image_path):
-#     #Best parameters are stored privately and not shared on GitHub.
-#     params= [7, 7, 0.7389686996692504, 1, 0.37438265817010036, 1, 0.526007653770587, 1, 42.77016806408365, 483.1027394129678]
-#     #Dummy function for
-#     value = blob(image_path, 7, 7, 0.7389686996692504, 1, 0.37438265817010036, 1, 0.526007653770587, 1, 42.77016806408365, 483.1027394129678)
-#     return value
 
 def AI_calculation(image):
     """Perform AI calculation on the provided image."""
@@ -165,9 +107,6 @@ def process_image(image_stream):
     try:
         image_stream.seek(0)  # Ensure the stream is at the start
         with Image.open(image_stream) as img:
-            # Crop the image (example crop: 240 pixels from left and right)
-            #cropped_img = img.crop((0, 0, img.width, img.height))
-            # Perform AI calculation
             value = AI_calculation(img)  #MAde changes here
             return value
     except Exception as e:
@@ -176,32 +115,11 @@ def process_image(image_stream):
 
 from ultralytics import YOLO
 
-# def inference(image_path, model):
-#     # Load the trained model
-#     #model = YOLO('/home/nicolaiaustad/Desktop/CropCounter2/model/best.pt')
-#     try:
-#         print("inside try: "+image_path)
-#         results = model(image_path)
-        
-#         return len(results[0].boxes)
-#     except Exception as e:
-#         logging.error(f"Error processing image: {e}")
-#         return None
-
-
 
 def inference(image, model):
     try:
-        # # Check if the image is a PIL.Image object
-        # if isinstance(image, Image.Image):
-        #     print("Received a PIL Image object")
-        # else:
-        #     print("Received an image path or unsupported type")
-
-        # Run inference
-        
-        
         results = model.predict(image, imgsz=2464, conf=0.5)
+        logging.info("Predicted result: "+str(len(results[0].boxes)))
         return len(results[0].boxes)
     except Exception as e:
         logging.error(f"Error processing image: {e}")

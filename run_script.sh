@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo /home/nicolaiaustad/Desktop/CropCounter2/myenv/bin/python /home/nicolaiaustad/Desktop/CropCounter2/run.py
+sudo /home/nicolaiaustad/Desktop/CropCounter/myenv/bin/python /home/nicolaiaustad/Desktop/CropCounter/run.py

@@ -25,7 +25,7 @@ def capture_image(picam2, counter, capture_images, longitude, latitude):
     
     # Optionally save every 50th image as JPEG
     if counter % 30 == 0:
-        jpeg_directory = "/home/nicolaiaustad/Desktop/CropCounter2/logged_images"
+        jpeg_directory = "/home/nicolaiaustad/Desktop/CropCounter/logged_images"
         if not os.path.exists(jpeg_directory):
             os.makedirs(jpeg_directory)
         jpeg_filename = f"{jpeg_directory}/bygg_raset_image_{timestamp}_lat{latitude}_lon{longitude}.jpeg"
@@ -36,7 +36,7 @@ def capture_image(picam2, counter, capture_images, longitude, latitude):
         logging.info(f"Saved JPEG {jpeg_filename}")
     
     elif counter % 201 == 0:
-        jpeg_directory = "/home/nicolaiaustad/Desktop/CropCounter2/logged_images"
+        jpeg_directory = "/home/nicolaiaustad/Desktop/CropCounter/logged_images"
         if not os.path.exists(jpeg_directory):
             os.makedirs(jpeg_directory)
         jpeg_filename = f"{jpeg_directory}/PNG_bygg_raset_image_{timestamp}_lat{latitude}_lon{longitude}.png"

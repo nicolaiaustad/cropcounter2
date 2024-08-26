@@ -107,7 +107,7 @@ def shp_to_grid(filename, gridsize):
     plt.title('Grid within Boundary (UTM)')
     plt.legend()
     plt.grid(True)
-    plt.savefig('/home/nicolaiaustad/Desktop/CropCounter2/XXX_last_grid_plot_utm.png')
+    plt.savefig('/home/nicolaiaustad/Desktop/CropCounter/XXX_last_grid_plot_utm.png')
 
     values_gps = np.zeros(len(grid_points_wgs84))
     #values_gps = np.full(len(grid_points), np.nan)
@@ -246,7 +246,7 @@ def make_heatmap_and_save(df_data, grid_size, heatmap_output_path, shapefile_out
         
     # Ensure the heatmap_output_path does not start with /tmp/
     heatmap_output_path = heatmap_output_path.lstrip("/tmp/")
-    plt.savefig("/home/nicolaiaustad/Desktop/CropCounter2/generated_heatmaps/"+heatmap_output_path)
+    plt.savefig("/home/nicolaiaustad/Desktop/CropCounter/generated_heatmaps/"+heatmap_output_path)
      
     plt.savefig(f"{save_directory}"+heatmap_output_path)
     plt.close()
@@ -332,7 +332,7 @@ def generate_idw_heatmap(df_data, bound, grid_size, heatmap_output_path, shapefi
         os.makedirs(save_directory)
     # Ensure the heatmap_output_path does not start with /tmp/
     heatmap_output_path = heatmap_output_path.lstrip("/tmp/")
-    plt.savefig("/home/nicolaiaustad/Desktop/CropCounter2/generated_heatmaps/"+heatmap_output_path, bbox_inches='tight')
+    plt.savefig("/home/nicolaiaustad/Desktop/CropCounter/generated_heatmaps/"+heatmap_output_path, bbox_inches='tight')
     plt.close()
     logging.info(f"Heatmap saved to {heatmap_output_path}")
     

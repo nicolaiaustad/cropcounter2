@@ -1,0 +1,21 @@
+2024-08-26 19:14:39,948 run.py script started with 4 cores
+2024-08-26 19:14:40,011 Copied /mnt/usb_settings/settings.txt to /tmp/settings.txt
+2024-08-26 19:14:40,021 Copied /mnt/usb_settings/shapefiles to /tmp/shapefiles
+2024-08-26 19:14:42,970 Now the While loop starts...
+2024-08-26 19:14:43,539 Saved JPEG /home/nicolaiaustad/Desktop/CropCounter/logged_images/bygg_raset_image_20240826_191442_971_lat0_lon0.jpeg
+2024-08-26 19:14:46,236 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:14:46,237 Total processed images: 1.00, in Time: 3.27
+2024-08-26 19:14:48,802 Total processed images: 2.00, in Time: 5.83
+2024-08-26 19:14:51,360 Total processed images: 3.00, in Time: 8.39
+2024-08-26 19:14:53,892 Total processed images: 4.00, in Time: 10.92
+2024-08-26 19:14:56,466 Total processed images: 5.00, in Time: 13.50
+2024-08-26 19:14:57,813 Signal received, exiting...
+2024-08-26 19:14:59,014 Signal received, exiting...
+2024-08-26 19:14:59,034 Program interrupted
+2024-08-26 19:14:59,042 Camera stopped and resources cleaned up
+2024-08-26 19:14:59,043 Cleaning up resources...
+2024-08-26 19:14:59,721 Heatmap saved to RasetField_custom.png
+2024-08-26 19:14:59,932 Shapefile saved to /tmp/RasetField_custom
+2024-08-26 19:15:02,266 Heatmap saved to RasetField_idw.png
+2024-08-26 19:15:04,124 Shapefile saved to /tmp/RasetField_idw
+2024-08-26 19:15:08,722 Now generated files should be saved...
