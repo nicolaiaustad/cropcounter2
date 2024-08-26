@@ -58,14 +58,16 @@ logging.basicConfig(
 
 
 
-# Signal handler to catch termination signals
 def signal_handler(sig, frame):
-    
+    print("Signal received, exiting...")
     logging.info("Signal received, exiting...")
-    raise KeyboardInterrupt 
+    #raise KeyboardInterrupt
+    for p in active_children():
+        p.terminate()
     
-
-
+    sys.exit(0)
+    
+    
 signal.signal(signal.SIGINT, signal_handler)
 signal.signal(signal.SIGTERM, signal_handler)
 
@@ -89,8 +91,7 @@ def collect_result(result):
     logging.info(f"Processed result: {result}")
     
     
-def main(capture_images=True, num_cores=4):
-    logging.info(f'run.py script started with {num_cores} cores')
+def main():
     mount_point = '/mnt/usb_settings'
     device = '/dev/sda1'  # Adjust this as needed
     mount_point = load_settings.mount_usb(mount_point, device)  # Ensure the USB is mounted
@@ -269,6 +270,4 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             pass
     else:
-      
-        
-        main(capture_images=True, num_cores=4)
+        main()

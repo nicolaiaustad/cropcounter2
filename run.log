@@ -19,3 +19,267 @@
 2024-08-26 19:15:02,266 Heatmap saved to RasetField_idw.png
 2024-08-26 19:15:04,124 Shapefile saved to /tmp/RasetField_idw
 2024-08-26 19:15:08,722 Now generated files should be saved...
+2024-08-26 19:24:00,717 Copied /mnt/usb_settings/settings.txt to /tmp/settings.txt
+2024-08-26 19:24:00,728 Copied /mnt/usb_settings/shapefiles to /tmp/shapefiles
+2024-08-26 19:24:03,674 Now the While loop starts...
+2024-08-26 19:24:04,255 Saved JPEG /home/nicolaiaustad/Desktop/CropCounter/logged_images/bygg_raset_image_20240826_192403_675_lat0_lon0.jpeg
+2024-08-26 19:24:06,932 Predicted result: 0
+2024-08-26 19:24:06,951 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:24:06,951 Total processed images: 1.00, in Time: 3.28
+2024-08-26 19:24:09,328 Predicted result: 0
+2024-08-26 19:24:09,337 Total processed images: 2.00, in Time: 5.67
+2024-08-26 19:24:12,040 Predicted result: 0
+2024-08-26 19:24:12,054 Total processed images: 3.00, in Time: 8.38
+2024-08-26 19:24:14,637 Predicted result: 0
+2024-08-26 19:24:14,646 Total processed images: 4.00, in Time: 10.97
+2024-08-26 19:24:15,440 Signal received, exiting...
+2024-08-26 19:24:17,234 Signal received, exiting...
+2024-08-26 19:24:17,235 Error processing image: name 'multiprocessing' is not defined
+2024-08-26 19:24:17,257 Total processed images: 4.00, in Time: 13.59
+2024-08-26 19:24:19,958 Predicted result: 0
+2024-08-26 19:24:19,974 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:24:19,974 Total processed images: 5.00, in Time: 16.30
+2024-08-26 19:24:22,612 Predicted result: 0
+2024-08-26 19:24:22,621 Total processed images: 6.00, in Time: 18.95
+2024-08-26 19:24:25,130 Signal received, exiting...
+2024-08-26 19:24:25,131 Error processing image: name 'multiprocessing' is not defined
+2024-08-26 19:24:25,132 Total processed images: 6.00, in Time: 21.46
+2024-08-26 19:24:27,732 Predicted result: 0
+2024-08-26 19:24:27,741 Total processed images: 7.00, in Time: 24.07
+2024-08-26 19:24:30,326 Predicted result: 0
+2024-08-26 19:24:30,335 Total processed images: 8.00, in Time: 26.66
+2024-08-26 19:24:33,026 Signal received, exiting...
+2024-08-26 19:24:33,026 Error processing image: name 'multiprocessing' is not defined
+2024-08-26 19:24:33,028 Total processed images: 8.00, in Time: 29.36
+2024-08-26 19:24:35,562 Predicted result: 0
+2024-08-26 19:24:35,571 Total processed images: 9.00, in Time: 31.90
+2024-08-26 19:24:38,163 Predicted result: 0
+2024-08-26 19:24:38,173 Total processed images: 10.00, in Time: 34.50
+2024-08-26 19:24:40,682 Predicted result: 0
+2024-08-26 19:24:40,691 Total processed images: 11.00, in Time: 37.02
+2024-08-26 19:24:43,257 Predicted result: 0
+2024-08-26 19:24:43,266 Total processed images: 12.00, in Time: 39.59
+2024-08-26 19:24:45,773 Predicted result: 0
+2024-08-26 19:24:45,782 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:24:45,782 Total processed images: 13.00, in Time: 42.11
+2024-08-26 19:24:48,362 Predicted result: 0
+2024-08-26 19:24:48,371 Total processed images: 14.00, in Time: 44.70
+2024-08-26 19:24:50,877 Predicted result: 0
+2024-08-26 19:24:50,886 Total processed images: 15.00, in Time: 47.21
+2024-08-26 19:24:53,459 Predicted result: 0
+2024-08-26 19:24:53,467 Total processed images: 16.00, in Time: 49.80
+2024-08-26 19:24:55,951 Predicted result: 0
+2024-08-26 19:24:55,960 Total processed images: 17.00, in Time: 52.29
+2024-08-26 19:24:58,501 Predicted result: 0
+2024-08-26 19:24:58,511 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:24:58,511 Total processed images: 18.00, in Time: 54.84
+2024-08-26 19:25:01,004 Predicted result: 0
+2024-08-26 19:25:01,013 Total processed images: 19.00, in Time: 57.34
+2024-08-26 19:25:03,618 Predicted result: 0
+2024-08-26 19:25:03,628 Total processed images: 20.00, in Time: 59.96
+2024-08-26 19:25:06,147 Predicted result: 0
+2024-08-26 19:25:06,155 Total processed images: 21.00, in Time: 62.48
+2024-08-26 19:25:08,695 Predicted result: 0
+2024-08-26 19:25:08,710 Total processed images: 22.00, in Time: 65.04
+2024-08-26 19:25:11,220 Predicted result: 0
+2024-08-26 19:25:11,229 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:25:11,230 Total processed images: 23.00, in Time: 67.56
+2024-08-26 19:25:13,726 Predicted result: 0
+2024-08-26 19:25:13,735 Total processed images: 24.00, in Time: 70.06
+2024-08-26 19:25:16,237 Predicted result: 0
+2024-08-26 19:25:16,246 Total processed images: 25.00, in Time: 72.57
+2024-08-26 19:25:18,749 Predicted result: 0
+2024-08-26 19:25:18,758 Total processed images: 26.00, in Time: 75.09
+2024-08-26 19:25:21,273 Predicted result: 0
+2024-08-26 19:25:21,282 Total processed images: 27.00, in Time: 77.61
+2024-08-26 19:25:21,847 Saved JPEG /home/nicolaiaustad/Desktop/CropCounter/logged_images/bygg_raset_image_20240826_192521_282_lat0_lon0.jpeg
+2024-08-26 19:26:13,214 /dev/sda1 is already mounted at /mnt/usb_settings
+2024-08-26 19:26:13,215 Copied /mnt/usb_settings/settings.txt to /tmp/settings.txt
+2024-08-26 19:26:13,225 Copied /mnt/usb_settings/shapefiles to /tmp/shapefiles
+2024-08-26 19:26:16,152 Now the While loop starts...
+2024-08-26 19:26:16,775 Saved JPEG /home/nicolaiaustad/Desktop/CropCounter/logged_images/bygg_raset_image_20240826_192616_153_lat0_lon0.jpeg
+2024-08-26 19:26:19,495 Predicted result: 0
+2024-08-26 19:26:19,508 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:26:19,508 Total processed images: 1.00, in Time: 3.36
+2024-08-26 19:26:22,061 Predicted result: 0
+2024-08-26 19:26:22,070 Total processed images: 2.00, in Time: 5.92
+2024-08-26 19:26:24,276 Signal received, exiting...
+2024-08-26 19:26:24,638 Signal received, exiting...
+2024-08-26 19:26:24,659 Camera stopped and resources cleaned up
+2024-08-26 19:26:24,661 Cleaning up resources...
+2024-08-26 19:26:25,368 Heatmap saved to RasetField_custom.png
+2024-08-26 19:26:25,576 Shapefile saved to /tmp/RasetField_custom
+2024-08-26 19:26:27,941 Heatmap saved to RasetField_idw.png
+2024-08-26 19:26:29,838 Shapefile saved to /tmp/RasetField_idw
+2024-08-26 19:26:34,205 Now generated files should be saved...
+2024-08-26 19:26:34,207 Signal received, exiting...
+2024-08-26 19:26:59,707 Copied /mnt/usb_settings/settings.txt to /tmp/settings.txt
+2024-08-26 19:26:59,717 Copied /mnt/usb_settings/shapefiles to /tmp/shapefiles
+2024-08-26 19:27:02,648 Now the While loop starts...
+2024-08-26 19:27:03,234 Saved JPEG /home/nicolaiaustad/Desktop/CropCounter/logged_images/bygg_raset_image_20240826_192702_649_lat0_lon0.jpeg
+2024-08-26 19:27:06,023 Predicted result: 0
+2024-08-26 19:27:06,035 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:27:06,035 Total processed images: 1.00, in Time: 3.39
+2024-08-26 19:27:08,606 Predicted result: 0
+2024-08-26 19:27:08,615 Total processed images: 2.00, in Time: 5.97
+2024-08-26 19:27:11,209 Predicted result: 0
+2024-08-26 19:27:11,218 Total processed images: 3.00, in Time: 8.57
+2024-08-26 19:27:13,720 Predicted result: 0
+2024-08-26 19:27:13,729 Total processed images: 4.00, in Time: 11.08
+2024-08-26 19:27:16,299 Predicted result: 0
+2024-08-26 19:27:16,308 Total processed images: 5.00, in Time: 13.66
+2024-08-26 19:27:18,808 Predicted result: 0
+2024-08-26 19:27:18,816 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:27:18,817 Total processed images: 6.00, in Time: 16.17
+2024-08-26 19:27:21,364 Predicted result: 0
+2024-08-26 19:27:21,372 Total processed images: 7.00, in Time: 18.73
+2024-08-26 19:27:23,801 Predicted result: 0
+2024-08-26 19:27:23,809 Total processed images: 8.00, in Time: 21.16
+2024-08-26 19:27:26,423 Predicted result: 0
+2024-08-26 19:27:26,432 Total processed images: 9.00, in Time: 23.79
+2024-08-26 19:27:28,964 Predicted result: 0
+2024-08-26 19:27:28,973 Total processed images: 10.00, in Time: 26.33
+2024-08-26 19:27:31,536 Predicted result: 0
+2024-08-26 19:27:31,545 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:27:31,545 Total processed images: 11.00, in Time: 28.90
+2024-08-26 19:27:34,093 Predicted result: 0
+2024-08-26 19:27:34,102 Total processed images: 12.00, in Time: 31.46
+2024-08-26 19:27:36,642 Predicted result: 0
+2024-08-26 19:27:36,651 Total processed images: 13.00, in Time: 34.00
+2024-08-26 19:27:39,186 Predicted result: 0
+2024-08-26 19:27:39,195 Total processed images: 14.00, in Time: 36.55
+2024-08-26 19:27:41,705 Predicted result: 0
+2024-08-26 19:27:41,713 Total processed images: 15.00, in Time: 39.07
+2024-08-26 19:27:44,254 Predicted result: 0
+2024-08-26 19:27:44,263 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:27:44,263 Total processed images: 16.00, in Time: 41.62
+2024-08-26 19:27:46,850 Predicted result: 0
+2024-08-26 19:27:46,859 Total processed images: 17.00, in Time: 44.21
+2024-08-26 19:27:49,375 Predicted result: 0
+2024-08-26 19:27:49,385 Total processed images: 18.00, in Time: 46.74
+2024-08-26 19:27:51,927 Predicted result: 0
+2024-08-26 19:27:51,936 Total processed images: 19.00, in Time: 49.29
+2024-08-26 19:27:54,453 Predicted result: 0
+2024-08-26 19:27:54,462 Total processed images: 20.00, in Time: 51.82
+2024-08-26 19:27:57,000 Predicted result: 0
+2024-08-26 19:27:57,008 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:27:57,009 Total processed images: 21.00, in Time: 54.36
+2024-08-26 19:27:59,523 Predicted result: 0
+2024-08-26 19:27:59,533 Total processed images: 22.00, in Time: 56.89
+2024-08-26 19:28:02,068 Predicted result: 0
+2024-08-26 19:28:02,077 Total processed images: 23.00, in Time: 59.43
+2024-08-26 19:28:04,628 Predicted result: 0
+2024-08-26 19:28:04,637 Total processed images: 24.00, in Time: 61.99
+2024-08-26 19:28:07,141 Predicted result: 0
+2024-08-26 19:28:07,150 Total processed images: 25.00, in Time: 64.50
+2024-08-26 19:28:09,692 Predicted result: 0
+2024-08-26 19:28:09,701 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:28:09,701 Total processed images: 26.00, in Time: 67.05
+2024-08-26 19:28:12,225 Predicted result: 0
+2024-08-26 19:28:12,233 Total processed images: 27.00, in Time: 69.59
+2024-08-26 19:28:14,776 Predicted result: 0
+2024-08-26 19:28:14,784 Total processed images: 28.00, in Time: 72.14
+2024-08-26 19:28:17,286 Predicted result: 0
+2024-08-26 19:28:17,295 Total processed images: 29.00, in Time: 74.65
+2024-08-26 19:28:19,880 Predicted result: 0
+2024-08-26 19:28:19,889 Total processed images: 30.00, in Time: 77.24
+2024-08-26 19:28:20,457 Saved JPEG /home/nicolaiaustad/Desktop/CropCounter/logged_images/bygg_raset_image_20240826_192819_889_lat0_lon0.jpeg
+2024-08-26 19:28:22,440 Predicted result: 0
+2024-08-26 19:28:22,449 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:28:22,473 Total processed images: 31.00, in Time: 79.83
+2024-08-26 19:28:25,004 Predicted result: 0
+2024-08-26 19:28:25,013 Total processed images: 32.00, in Time: 82.37
+2024-08-26 19:28:27,551 Predicted result: 0
+2024-08-26 19:28:27,560 Total processed images: 33.00, in Time: 84.91
+2024-08-26 19:28:30,087 Predicted result: 0
+2024-08-26 19:28:30,096 Total processed images: 34.00, in Time: 87.45
+2024-08-26 19:28:32,620 Predicted result: 0
+2024-08-26 19:28:32,629 Total processed images: 35.00, in Time: 89.98
+2024-08-26 19:28:35,168 Predicted result: 0
+2024-08-26 19:28:35,176 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:28:35,177 Total processed images: 36.00, in Time: 92.53
+2024-08-26 19:28:37,713 Predicted result: 0
+2024-08-26 19:28:37,722 Total processed images: 37.00, in Time: 95.08
+2024-08-26 19:28:40,273 Predicted result: 0
+2024-08-26 19:28:40,283 Total processed images: 38.00, in Time: 97.64
+2024-08-26 19:28:42,807 Predicted result: 0
+2024-08-26 19:28:42,818 Total processed images: 39.00, in Time: 100.17
+2024-08-26 19:28:45,371 Predicted result: 0
+2024-08-26 19:28:45,379 Total processed images: 40.00, in Time: 102.73
+2024-08-26 19:28:47,895 Predicted result: 0
+2024-08-26 19:28:47,904 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:28:47,905 Total processed images: 41.00, in Time: 105.26
+2024-08-26 19:28:50,468 Predicted result: 0
+2024-08-26 19:28:50,477 Total processed images: 42.00, in Time: 107.83
+2024-08-26 19:28:52,994 Predicted result: 0
+2024-08-26 19:28:53,003 Total processed images: 43.00, in Time: 110.36
+2024-08-26 19:28:55,583 Predicted result: 0
+2024-08-26 19:28:55,592 Total processed images: 44.00, in Time: 112.95
+2024-08-26 19:28:58,116 Predicted result: 0
+2024-08-26 19:28:58,125 Total processed images: 45.00, in Time: 115.48
+2024-08-26 19:29:00,659 Predicted result: 0
+2024-08-26 19:29:00,668 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:29:00,668 Total processed images: 46.00, in Time: 118.02
+2024-08-26 19:29:03,182 Predicted result: 0
+2024-08-26 19:29:03,191 Total processed images: 47.00, in Time: 120.54
+2024-08-26 19:29:05,745 Predicted result: 0
+2024-08-26 19:29:05,754 Total processed images: 48.00, in Time: 123.11
+2024-08-26 19:29:08,285 Predicted result: 0
+2024-08-26 19:29:08,294 Total processed images: 49.00, in Time: 125.65
+2024-08-26 19:29:10,869 Predicted result: 0
+2024-08-26 19:29:10,879 Total processed images: 50.00, in Time: 128.23
+2024-08-26 19:29:13,417 Predicted result: 0
+2024-08-26 19:29:13,426 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:29:13,427 Total processed images: 51.00, in Time: 130.78
+2024-08-26 19:29:15,974 Predicted result: 0
+2024-08-26 19:29:15,983 Total processed images: 52.00, in Time: 133.34
+2024-08-26 19:29:18,476 Predicted result: 0
+2024-08-26 19:29:18,485 Total processed images: 53.00, in Time: 135.84
+2024-08-26 19:29:21,044 Predicted result: 0
+2024-08-26 19:29:21,053 Total processed images: 54.00, in Time: 138.41
+2024-08-26 19:29:23,603 Predicted result: 0
+2024-08-26 19:29:23,612 Total processed images: 55.00, in Time: 140.97
+2024-08-26 19:29:25,915 Signal received, exiting...
+2024-08-26 19:29:26,245 Signal received, exiting...
+2024-08-26 19:29:26,265 Camera stopped and resources cleaned up
+2024-08-26 19:29:26,267 Cleaning up resources...
+2024-08-26 19:29:26,970 Heatmap saved to RasetField_custom.png
+2024-08-26 19:29:27,183 Shapefile saved to /tmp/RasetField_custom
+2024-08-26 19:29:29,535 Heatmap saved to RasetField_idw.png
+2024-08-26 19:29:31,496 Shapefile saved to /tmp/RasetField_idw
+2024-08-26 19:29:36,013 Now generated files should be saved...
+2024-08-26 19:33:21,992 Copied /mnt/usb_settings/settings.txt to /tmp/settings.txt
+2024-08-26 19:33:22,005 Copied /mnt/usb_settings/shapefiles to /tmp/shapefiles
+2024-08-26 19:33:24,948 Now the While loop starts...
+2024-08-26 19:33:25,537 Saved JPEG /home/nicolaiaustad/Desktop/CropCounter/logged_images/bygg_raset_image_20240826_193324_949_lat0_lon0.jpeg
+2024-08-26 19:33:28,275 Predicted result: 0
+2024-08-26 19:33:28,289 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:33:28,289 Total processed images: 1.00, in Time: 3.34
+2024-08-26 19:33:30,837 Predicted result: 0
+2024-08-26 19:33:30,846 Total processed images: 2.00, in Time: 5.90
+2024-08-26 19:33:32,654 Signal received, exiting...
+2024-08-26 19:33:33,403 Signal received, exiting...
+2024-08-26 19:33:33,423 Camera stopped and resources cleaned up
+2024-08-26 19:33:33,431 Cleaning up resources...
+2024-08-26 19:33:34,133 Heatmap saved to RasetField_custom.png
+2024-08-26 19:33:34,340 Shapefile saved to /tmp/RasetField_custom
+2024-08-26 19:33:36,691 Heatmap saved to RasetField_idw.png
+2024-08-26 19:33:38,575 Shapefile saved to /tmp/RasetField_idw
+2024-08-26 19:33:43,000 Now generated files should be saved...
+2024-08-26 19:43:28,286 Copied /mnt/usb_settings/settings.txt to /tmp/settings.txt
+2024-08-26 19:43:28,304 Copied /mnt/usb_settings/shapefiles to /tmp/shapefiles
+2024-08-26 19:43:31,263 Now the While loop starts...
+2024-08-26 19:43:31,885 Saved JPEG /home/nicolaiaustad/Desktop/CropCounter/logged_images/bygg_raset_image_20240826_194331_264_lat0_lon0.jpeg
+2024-08-26 19:43:34,587 Predicted result: 0
+2024-08-26 19:43:34,600 GPS coordinate outside grid. Satellite: None Latitude: 0, Longitude: 0
+2024-08-26 19:43:34,601 Total processed images: 1.00, in Time: 3.34
+2024-08-26 19:43:36,124 Signal received, exiting...
+2024-08-26 19:43:37,030 Signal received, exiting...
+2024-08-26 19:43:37,055 Camera stopped and resources cleaned up
+2024-08-26 19:43:37,056 Cleaning up resources...
+2024-08-26 19:43:37,742 Heatmap saved to RasetField_custom.png
+2024-08-26 19:43:37,949 Shapefile saved to /tmp/RasetField_custom
+2024-08-26 19:43:40,316 Heatmap saved to RasetField_idw.png
+2024-08-26 19:43:42,210 Shapefile saved to /tmp/RasetField_idw
+2024-08-26 19:43:46,722 Now generated files should be saved...
+2024-08-26 19:43:46,725 Signal received, exiting...
