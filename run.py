@@ -156,25 +156,19 @@ def main(capture_images=True, num_cores=4):
     # Load the YOLO model
     
     ncnn_model = YOLO("best_ncnn_model", task="detect")
-    print("df_utm size before while")
-    print(df_utm.shape)
+   
     try:
         counter = 0
         logging.info('Now the While loop starts...')
         while True:
             start_time = time.time()
-            
-           
-            
             longitude, latitude, satellites, speed = gps_func.get_gps()
             speed_store.append(speed)
             image_stream, timestamp, metadata = capture.capture_image(picam2, counter, True, longitude, latitude)
            
-            
             image_metadata[timestamp] = metadata
             
             try:
-                
                 
                 value = calculations.inference(image_stream, ncnn_model)
                 if value is not None:
@@ -199,9 +193,6 @@ def main(capture_images=True, num_cores=4):
                     
                     total_images_processed += 1
                 del image_metadata[timestamp]
-                
-                
-                
                 
             except Exception as e:
                 logging.error(f"Error processing image with timestamp {timestamp}: {e}")
