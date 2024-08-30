@@ -28,18 +28,18 @@ def capture_image(picam2, counter, capture_images, longitude, latitude):
         jpeg_directory = "/home/nicolaiaustad/Desktop/CropCounter/logged_images"
         if not os.path.exists(jpeg_directory):
             os.makedirs(jpeg_directory)
-        jpeg_filename = f"{jpeg_directory}/bygg_raset_image_{timestamp}_lat{latitude}_lon{longitude}.jpeg"
+        jpeg_filename = f"{jpeg_directory}/log_image_{timestamp}_lat{latitude}_lon{longitude}.jpeg"
         
         # Save the image as JPEG
         image_temp.save(jpeg_filename, "JPEG", quality=85)
         
         logging.info(f"Saved JPEG {jpeg_filename}")
     
-    elif counter % 201 == 0:
+    elif counter % 60 == 0:
         jpeg_directory = "/home/nicolaiaustad/Desktop/CropCounter/logged_images"
         if not os.path.exists(jpeg_directory):
             os.makedirs(jpeg_directory)
-        jpeg_filename = f"{jpeg_directory}/PNG_bygg_raset_image_{timestamp}_lat{latitude}_lon{longitude}.png"
+        jpeg_filename = f"{jpeg_directory}/png_log_image_{timestamp}_lat{latitude}_lon{longitude}.png"
         
         # Save the image as JPEG
         image_temp.save(jpeg_filename, "png")

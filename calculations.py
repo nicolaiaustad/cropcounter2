@@ -118,7 +118,7 @@ from ultralytics import YOLO
 
 def inference(image, model):
     try:
-        results = model.predict(image, imgsz=2464, conf=0.5)
+        results = model.predict(image, imgsz=1600, conf=0.4)
         logging.info("Predicted result: "+str(len(results[0].boxes)))
         return len(results[0].boxes)
     except Exception as e:

@@ -6,9 +6,9 @@
 # from multiprocessing import Pool
 from ultralytics import YOLO
 
-# model = YOLO("best.pt")
+#model = YOLO("best60.pt")
 # model.export(format="onnx", dynamic=True, int8=True)
-# onnx_model = YOLO("best.onnx")
+# onnx_model = YOLO("best60.onnx")
 # results = onnx_model.predict("logged_images/havre_image_20240814_135240_216_lat63.844473_lon11.383946.jpeg", imgsz=2816)
 # results[0].save("output_with_boxes.jpg")
 
@@ -16,8 +16,12 @@ from ultralytics import YOLO
 
 
 
-# model.export(format="ncnn", half=True, imgsz=2464)
-# new_ncnn_model = YOLO("best_ncnn_model", task="detect")
+#model.export(format="ncnn", half=True, imgsz=1600)
+#best60_1920_ncnn = YOLO("best60_ncnn_model", task="detect")
+
+# model.export(format="ncnn", half=True, imgsz=1920)
+# best60_2464_ncnn = YOLO("best_ncnn_model", task="detect")
+
 # results = new_ncnn_model.predict("logged_images/01Move_G3_E500_S4_hvete_20240805_174334.png", imgsz=2464, conf=0.5)
 # results[0].save("output_with_boxes_ncnn.jpg")
 
@@ -26,7 +30,49 @@ from ultralytics import YOLO
 # results[0].save("output_with_boxes_best.jpg")
 
 
+model = YOLO("best_ncnn_model", task="detect")
+model_1920 = YOLO("best60_ncnn_model_1920", task="detect")
+model_2464 = YOLO("best60_ncnn_model_2464", task="detect")
+model_1600 = YOLO("best60_ncnn_model_1600", task="detect")
 
+img_path = "test_pred"
+import os
+for file in os.listdir(img_path):
+    file = os.path.join(img_path, file)
+    #result = model.predict(file, imgsz=2464, conf=0.40)
+    result_1600 = model_1600.predict(file, imgsz=1600, conf=0.40)
+    result_1920 = model_1920.predict(file, imgsz=1920, conf=0.40)
+    result_2464 = model_2464.predict(file, imgsz=2464, conf=0.40)
+
+# from PIL import Image
+# import matplotlib.pyplot as plt
+# import os
+
+# # Function to display images
+# def display_images(original, resized):
+#     fig, axes = plt.subplots(1, 2, figsize=(24, 12))
+#     axes[0].imshow(original)
+#     axes[0].set_title("Original Image (2464x2464)")
+#     axes[0].axis('off')
+
+#     axes[1].imshow(resized)
+#     axes[1].set_title("Resized Image (1600x1600)")
+#     axes[1].axis('off')
+
+#     plt.savefig("lol1600.jpeg")
+
+# # Load an image
+# img_path = "/home/nicolaiaustad/Desktop/CropCounter/test_pred"  # Change this to your directory containing the images
+# image_file = os.path.join(img_path, "49.jpeg")  # Replace with your image file name
+
+# original_image = Image.open(image_file).convert("RGB")
+
+# # Resize the image to 1920x1920
+# resized_image = original_image.resize((1600, 1600))
+
+# # Display the original and resized images
+# display_images(original_image, resized_image)
+    
 
 # # Load the YOLO model
 # model = YOLO('/home/nicolaiaustad/Desktop/CropCounter2/model/best.pt')
@@ -177,15 +223,15 @@ from ultralytics import YOLO
 #         print(f"Single image inference took {single_inference_time:.2f} seconds")
 
 
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from shapely.geometry import Point, Polygon
-import geopandas as gpd
-import alphashape
-import seaborn as sns
-from scipy.spatial import distance_matrix
-from scipy.ndimage import gaussian_filter
+# import pandas as pd
+# import numpy as np
+# import matplotlib.pyplot as plt
+# from shapely.geometry import Point, Polygon
+# import geopandas as gpd
+# import alphashape
+# import seaborn as sns
+# from scipy.spatial import distance_matrix
+# from scipy.ndimage import gaussian_filter
 
 # # Step 1: Create a test DataFrame with points forming an irregular shape and add some "values"
 # df = pd.DataFrame({
@@ -224,9 +270,9 @@ from scipy.ndimage import gaussian_filter
 # plt.savefig("UOter bound1.jpeg")
 
 # Generate 1000 unique x and y values
-np.random.seed(42)
-x_unique = np.sort(np.random.choice(range(0, 2000), 1000, replace=False))
-y_unique = np.sort(np.random.choice(range(0, 2000), 1000, replace=False))
+# np.random.seed(42)
+# x_unique = np.sort(np.random.choice(range(0, 2000), 1000, replace=False))
+# y_unique = np.sort(np.random.choice(range(0, 2000), 1000, replace=False))
 
 
 
@@ -264,136 +310,136 @@ y_unique = np.sort(np.random.choice(range(0, 2000), 1000, replace=False))
 #     })
 
 
-# Set the parameters for the grid
-x_min, x_max = 0, 100
-y_min, y_max = 0, 100
-spacing = 1  # Equal spacing between points
+# # Set the parameters for the grid
+# x_min, x_max = 0, 100
+# y_min, y_max = 0, 100
+# spacing = 1  # Equal spacing between points
 
-# Generate the grid points
-x_values = np.arange(x_min, x_max + spacing, spacing)
-y_values = np.arange(y_min, y_max + spacing, spacing)
-x_grid, y_grid = np.meshgrid(x_values, y_values)
+# # Generate the grid points
+# x_values = np.arange(x_min, x_max + spacing, spacing)
+# y_values = np.arange(y_min, y_max + spacing, spacing)
+# x_grid, y_grid = np.meshgrid(x_values, y_values)
 
-# Flatten the grid to create a list of x, y pairs
-x_flat = x_grid.flatten()
-y_flat = y_grid.flatten()
+# # Flatten the grid to create a list of x, y pairs
+# x_flat = x_grid.flatten()
+# y_flat = y_grid.flatten()
 
-# Generate random 'values' and set all 'measured' to True
-values = np.ones(len(x_flat))  # Random values between 5 and 50
-measured = np.full(x_flat.shape, True)  # All points are measured
+# # Generate random 'values' and set all 'measured' to True
+# values = np.ones(len(x_flat))  # Random values between 5 and 50
+# measured = np.full(x_flat.shape, True)  # All points are measured
 
-# Create the expanded dataframe
-df_test = pd.DataFrame({
-    'x': x_flat,
-    'y': y_flat,
-    'values': values,
-    'measured': measured
-})
+# # Create the expanded dataframe
+# df_test = pd.DataFrame({
+#     'x': x_flat,
+#     'y': y_flat,
+#     'values': values,
+#     'measured': measured
+# })
 
-# Convert the grid into a DataFrame for easier manipulation
-df_grid = df_test.pivot(index='y', columns='x', values='values')
+# # Convert the grid into a DataFrame for easier manipulation
+# df_grid = df_test.pivot(index='y', columns='x', values='values')
 
-# Shift some entire rows
-np.random.seed(0)  # For reproducibility
-shifted_rows = np.random.choice(df_grid.index, size=50, replace=False)  # Randomly pick 3 rows to shift
-for row in shifted_rows:
-    shift_value = np.random.uniform(-50, 50)
-    df_test.loc[df_test['y'] == row, 'x'] += shift_value
+# # Shift some entire rows
+# np.random.seed(0)  # For reproducibility
+# shifted_rows = np.random.choice(df_grid.index, size=50, replace=False)  # Randomly pick 3 rows to shift
+# for row in shifted_rows:
+#     shift_value = np.random.uniform(-50, 50)
+#     df_test.loc[df_test['y'] == row, 'x'] += shift_value
 
-# Shift some entire columns
-shifted_columns = np.random.choice(df_grid.columns, size=50, replace=False)  # Randomly pick 3 columns to shift
-for col in shifted_columns:
-    shift_value = np.random.uniform(-50, 50)
-    df_test.loc[df_test['x'] == col, 'y'] += shift_value
+# # Shift some entire columns
+# shifted_columns = np.random.choice(df_grid.columns, size=50, replace=False)  # Randomly pick 3 columns to shift
+# for col in shifted_columns:
+#     shift_value = np.random.uniform(-50, 50)
+#     df_test.loc[df_test['x'] == col, 'y'] += shift_value
 
-print(df_test['x'].unique)
-print(df_test.shape)
+# print(df_test['x'].unique)
+# print(df_test.shape)
 
-#df_test = pd.DataFrame(data)
+# #df_test = pd.DataFrame(data)
 
-#print(df_test.shape)
-# Step 2: Create a Concave Hull (Alpha Shape) from the points
-points = gpd.GeoSeries([Point(x, y) for x, y in zip(df_test['x'], df_test['y'])])
-alpha_shape = alphashape.alphashape(points, alpha=0.5)  # Adjust alpha as needed
-alpha_shape = alpha_shape.simplify(0.1, preserve_topology=True)
-# Step 3: Get the boundary of the alpha shape
-boundary = gpd.GeoSeries([alpha_shape]).boundary
+# #print(df_test.shape)
+# # Step 2: Create a Concave Hull (Alpha Shape) from the points
+# points = gpd.GeoSeries([Point(x, y) for x, y in zip(df_test['x'], df_test['y'])])
+# alpha_shape = alphashape.alphashape(points, alpha=0.5)  # Adjust alpha as needed
+# alpha_shape = alpha_shape.simplify(0.1, preserve_topology=True)
+# # Step 3: Get the boundary of the alpha shape
+# boundary = gpd.GeoSeries([alpha_shape]).boundary
 
-# Step 3: Perform IDW interpolation
-def inverse_distance_weighting(x, y, values, xi, yi, power=2, chunk_size=10000):
-    interpolated_values = np.zeros(xi.shape[0])
+# # Step 3: Perform IDW interpolation
+# def inverse_distance_weighting(x, y, values, xi, yi, power=2, chunk_size=10000):
+#     interpolated_values = np.zeros(xi.shape[0])
     
-    for start in range(0, xi.shape[0], chunk_size):
-        end = min(start + chunk_size, xi.shape[0])
+#     for start in range(0, xi.shape[0], chunk_size):
+#         end = min(start + chunk_size, xi.shape[0])
         
-        # Extract the current chunk of grid points
-        xi_chunk = xi[start:end]
-        yi_chunk = yi[start:end]
+#         # Extract the current chunk of grid points
+#         xi_chunk = xi[start:end]
+#         yi_chunk = yi[start:end]
         
-        # Compute the distance matrix between known points and current chunk of grid points
-        dist = distance_matrix(np.c_[x, y], np.c_[xi_chunk, yi_chunk])
+#         # Compute the distance matrix between known points and current chunk of grid points
+#         dist = distance_matrix(np.c_[x, y], np.c_[xi_chunk, yi_chunk])
         
-        # Replace zero distances with a small value to avoid division by zero
-        dist[dist == 0] = 1e-10
+#         # Replace zero distances with a small value to avoid division by zero
+#         dist[dist == 0] = 1e-10
         
-        # Compute the weights based on distance
-        weights = 1 / np.power(dist, power)
-        weights /= weights.sum(axis=0)
+#         # Compute the weights based on distance
+#         weights = 1 / np.power(dist, power)
+#         weights /= weights.sum(axis=0)
         
-        # Compute the weighted sum to get the interpolated values
-        interpolated_values[start:end] = np.dot(weights.T, values)
+#         # Compute the weighted sum to get the interpolated values
+#         interpolated_values[start:end] = np.dot(weights.T, values)
     
-    return interpolated_values
+#     return interpolated_values
 
-# Extract the 'x', 'y', and 'values' directly from the DataFrame
-x = df_test['x'].values
-y = df_test['y'].values
-values = df_test['values'].values
+# # Extract the 'x', 'y', and 'values' directly from the DataFrame
+# x = df_test['x'].values
+# y = df_test['y'].values
+# values = df_test['values'].values
 
-# Create a grid of points for the heatmap
-xi, yi = np.meshgrid(np.linspace(x.min(), x.max(), 100),
-                     np.linspace(y.min(), y.max(), 100))
+# # Create a grid of points for the heatmap
+# xi, yi = np.meshgrid(np.linspace(x.min(), x.max(), 100),
+#                      np.linspace(y.min(), y.max(), 100))
 
-# Flatten the grid to pass it to the IDW function
-xi_flat = xi.ravel()
-yi_flat = yi.ravel()
+# # Flatten the grid to pass it to the IDW function
+# xi_flat = xi.ravel()
+# yi_flat = yi.ravel()
 
-# Apply IDW interpolation
-interpolated_values = inverse_distance_weighting(x, y, values, xi_flat, yi_flat)
+# # Apply IDW interpolation
+# interpolated_values = inverse_distance_weighting(x, y, values, xi_flat, yi_flat)
 
-# Reshape the interpolated values back to the grid shape
-grid_z = interpolated_values.reshape(xi.shape)
+# # Reshape the interpolated values back to the grid shape
+# grid_z = interpolated_values.reshape(xi.shape)
 
-# Apply Gaussian smoothing
-grid_z = gaussian_filter(grid_z, sigma=1)
+# # Apply Gaussian smoothing
+# grid_z = gaussian_filter(grid_z, sigma=1)
 
-# Step 4: Mask out points outside the concave hull
-mask = np.array([not alpha_shape.contains(Point(xi_point, yi_point)) for xi_point, yi_point in zip(xi_flat, yi_flat)])
-mask = mask.reshape(xi.shape)
-grid_z[mask] = np.nan  # Mask out points outside the boundary
+# # Step 4: Mask out points outside the concave hull
+# mask = np.array([not alpha_shape.contains(Point(xi_point, yi_point)) for xi_point, yi_point in zip(xi_flat, yi_flat)])
+# mask = mask.reshape(xi.shape)
+# grid_z[mask] = np.nan  # Mask out points outside the boundary
 
-# Step 5: Visualize the concave hull and IDW heatmap
-fig, ax = plt.subplots(1, 2, figsize=(16, 8))
+# # Step 5: Visualize the concave hull and IDW heatmap
+# fig, ax = plt.subplots(1, 2, figsize=(16, 8))
 
-# Plot the concave hull polygon on the first subplot
-gdf = gpd.GeoDataFrame(geometry=[alpha_shape])
-gdf.plot(ax=ax[0], edgecolor='blue', facecolor='none', linewidth=2, label='Concave Hull (Alpha Shape)')
-ax[0].scatter(df_test['x'], df_test['y'], color='red', label='Points')
-ax[0].set_title('Concave Hull (Alpha Shape) of Points')
-ax[0].set_xlabel('X Coordinate')
-ax[0].set_ylabel('Y Coordinate')
-ax[0].set_aspect('equal')
-ax[0].legend()
+# # Plot the concave hull polygon on the first subplot
+# gdf = gpd.GeoDataFrame(geometry=[alpha_shape])
+# gdf.plot(ax=ax[0], edgecolor='blue', facecolor='none', linewidth=2, label='Concave Hull (Alpha Shape)')
+# ax[0].scatter(df_test['x'], df_test['y'], color='red', label='Points')
+# ax[0].set_title('Concave Hull (Alpha Shape) of Points')
+# ax[0].set_xlabel('X Coordinate')
+# ax[0].set_ylabel('Y Coordinate')
+# ax[0].set_aspect('equal')
+# ax[0].legend()
 
-# Plot the heatmap on the second subplot
-sns.heatmap(grid_z, cmap=sns.color_palette("RdYlGn", as_cmap=True), annot=False, fmt="f", cbar=True, xticklabels=False, yticklabels=False, ax=ax[1])
-ax[1].invert_yaxis()
-ax[1].set_title('IDW Heatmap of Values')
-ax[1].set_xlabel('X Coordinate')
-ax[1].set_ylabel('Y Coordinate')
+# # Plot the heatmap on the second subplot
+# sns.heatmap(grid_z, cmap=sns.color_palette("RdYlGn", as_cmap=True), annot=False, fmt="f", cbar=True, xticklabels=False, yticklabels=False, ax=ax[1])
+# ax[1].invert_yaxis()
+# ax[1].set_title('IDW Heatmap of Values')
+# ax[1].set_xlabel('X Coordinate')
+# ax[1].set_ylabel('Y Coordinate')
 
-# Save the plot
-plt.savefig("concave30.jpeg")
+# # Save the plot
+# plt.savefig("concave30.jpeg")
 
 
 

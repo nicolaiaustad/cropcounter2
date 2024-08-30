@@ -14,7 +14,7 @@ picam2 = Picamera2()
 # Create a camera configuration
 camera_config = picam2.create_still_configuration(
     main={
-        "size": (2816, 2464),  # Maximum resolution for the camera
+        "size": (2464, 2464),  # Maximum resolution for the camera
         "format": "RGB888"  # Use a high-quality format
     },
     controls={
@@ -48,11 +48,30 @@ try:
     while counter < 10:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         image_path = os.path.join(image_dir, f"training_{timestamp}.png")
-        # Capture the image
+        image_path2 = os.path.join(image_dir, f"training_{timestamp}.jpeg")
+        
+        # Measure time before capturing
+        start_time = time.time()
+        
+        # Capture the PNG image
         picam2.capture_file(image_path)
+        
+        # Measure time taken for PNG capture
+        png_time = time.time() - start_time
+        logger.info(f"PNG image saved at {image_path}. Time taken: {png_time:.2f} seconds")
+        
+        # Measure time before capturing JPEG
+        start_time = time.time()
+        
+        # Capture the JPEG image
+        picam2.capture_file(image_path2)
+        
+        # Measure time taken for JPEG capture
+        jpeg_time = time.time() - start_time
+        logger.info(f"JPEG image saved at {image_path2}. Time taken: {jpeg_time:.2f} seconds")
+        
         counter += 1
         time.sleep(2)
-        logger.info(f"Image saved at {image_path}")
 
 finally:
     # Stop the camera

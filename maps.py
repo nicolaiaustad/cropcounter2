@@ -107,6 +107,7 @@ def shp_to_grid(filename, gridsize):
     plt.title('Grid within Boundary (UTM)')
     plt.legend()
     plt.grid(True)
+    plt.gca().set_aspect('equal', adjustable='box')
     plt.savefig('/home/nicolaiaustad/Desktop/CropCounter/XXX_last_grid_plot_utm.png')
 
     values_gps = np.zeros(len(grid_points_wgs84))
@@ -134,7 +135,7 @@ def find_grid_cell(longitude, latitude, grid_size, df):
     adjusted_latitude = latitude - min_y
     
     # Round to the nearest grid point
-    cell_x = np.floor(adjusted_longitude / grid_size) * grid_size + min_x
+    cell_x = np.floor(adjusted_longitude / grid_size) * grid_size + min_x  #Could this mess up because of division by 3x3? lets try 7.
     cell_y = np.floor(adjusted_latitude / grid_size) * grid_size + min_y
 
     # Return the corresponding row in the DataFrame
@@ -169,7 +170,7 @@ def save_heatmap_to_shapefile(df_data, output_path, crs):
 import numpy as np
 from scipy.ndimage import gaussian_filter
 
-def custom_interpolation(pivot_table, sigma=1, min_value=0, max_value=500):
+def custom_interpolation(pivot_table, grid_size, sigma=1, min_value=0, max_value=80):
     grid_z = pivot_table.values
     
     # Step 1: Set up a custom function for interpolation
@@ -177,14 +178,14 @@ def custom_interpolation(pivot_table, sigma=1, min_value=0, max_value=500):
         center_value = values[4]  # Center value in the 3x3 grid
         
         # If the center pixel is non-zero, keep it as is
-        if center_value != 0:
+        if center_value != 0 and not np.isnan(center_value):
             return center_value
         
         # Get direct neighbors (up, down, left, right)
         neighbors = values[[1, 7, 3, 5]]  # Get values from the positions [up, down, left, right]
         
         # Consider only non-zero neighbors
-        non_zero_neighbors = neighbors[neighbors != 0]
+        non_zero_neighbors = neighbors[(neighbors != 0) & (~np.isnan(neighbors))]
         
         # If there are non-zero neighbors, return their mean
         if len(non_zero_neighbors) > 0:
@@ -206,13 +207,19 @@ def custom_interpolation(pivot_table, sigma=1, min_value=0, max_value=500):
 
 
 
-def make_heatmap_and_save(df_data, grid_size, heatmap_output_path, shapefile_output_path, crs):
+def make_heatmap_and_save(df_data, boundary_coords_utm, grid_size, heatmap_output_path, shapefile_output_path, crs):
     # Create pivot table for 'values'
     pivot_table_values = df_data.pivot(index='y', columns='x', values='values')
-
+    
+     # Create a mask for NaN values
+    mask = pivot_table_values.isna()
+    
     # Perform interpolation and smoothing
-    smoothed_grid = custom_interpolation(pivot_table_values)
+    smoothed_grid = custom_interpolation(pivot_table_values, grid_size)
 
+    # Apply the resized mask to the smoothed grid
+    smoothed_grid[mask] = np.nan
+    
     # Extract the grid points for saving
     unique_x = pivot_table_values.columns.values
     unique_y = pivot_table_values.index.values
@@ -232,13 +239,26 @@ def make_heatmap_and_save(df_data, grid_size, heatmap_output_path, shapefile_out
     plt.figure(figsize=(12, 10))
     cmap = sns.color_palette("RdYlGn", as_cmap=True)
     # cmap.set_bad(color='gray')
+    ax = plt.gca()
     
-    sns.heatmap(smoothed_grid, cmap=cmap, annot=False, fmt="f", cbar=True, xticklabels=False, yticklabels=False)
+    # Ensuring the correct aspect ratio
+    aspect_ratio = (unique_x.max() - unique_x.min()) / (unique_y.max() - unique_y.min())
+    ax.set_aspect(aspect_ratio)
+
+    sns.heatmap(smoothed_grid, cmap=cmap, annot=False, fmt="f", cbar=True, xticklabels=False, yticklabels=False, ax=ax,cbar_kws={'label': 'Farmi™ score'})
     plt.gca().invert_yaxis()
+    
+    ax.plot(boundary_coords_utm[:, 0], boundary_coords_utm[:, 1], 'r-', linewidth=2, label='Boundary')
+    
+    
     plt.title('Heatmap of Values')
     plt.xlabel('UTM X Coordinate')
     plt.ylabel('UTM Y Coordinate')
-    plt.savefig(heatmap_output_path) #Think this saves to usb stick in combination with load settings
+    # Overlay the boundary to ensure alignment
+   
+    
+    plt.gca().set_aspect('equal', adjustable='box')
+    plt.savefig(heatmap_output_path,  bbox_inches='tight') #Think this saves to usb stick in combination with load settings
     
     save_directory = "/home/dataplicity/remote/"
     if not os.path.exists(save_directory):
@@ -246,23 +266,24 @@ def make_heatmap_and_save(df_data, grid_size, heatmap_output_path, shapefile_out
         
     # Ensure the heatmap_output_path does not start with /tmp/
     heatmap_output_path = heatmap_output_path.lstrip("/tmp/")
-    plt.savefig("/home/nicolaiaustad/Desktop/CropCounter/generated_heatmaps/"+heatmap_output_path)
+    plt.savefig("/home/nicolaiaustad/Desktop/CropCounter/generated_heatmaps/"+heatmap_output_path,  bbox_inches='tight')
      
-    plt.savefig(f"{save_directory}"+heatmap_output_path)
+    plt.savefig(f"{save_directory}"+heatmap_output_path,  bbox_inches='tight')
     plt.close()
     logging.info(f"Heatmap saved to {heatmap_output_path}")
 
     # Save to shapefile
     save_heatmap_to_shapefile(df_data_interpolated, shapefile_output_path, crs)
     
- 
+
+from tqdm import tqdm
 
 
 def inverse_distance_weighting(x, y, values, xi, yi, power=2):
     # Break into smaller chunks if needed
-    chunk_size = 10000  # Adjust this based on your memory
+    chunk_size = 5000  # Adjust this based on your memory
     interpolated_values = np.zeros(xi.shape[0])
-    for start in range(0, xi.shape[0], chunk_size):
+    for start in tqdm(range(0, xi.shape[0], chunk_size), desc="Interpolating values"):
         end = min(start + chunk_size, xi.shape[0])
         dist = distance_matrix(np.c_[x, y], np.c_[xi[start:end], yi[start:end]])
         
@@ -282,10 +303,11 @@ def generate_idw_heatmap(df_data, bound, grid_size, heatmap_output_path, shapefi
     x = df_data['x'].values
     y = df_data['y'].values
     values = df_data['values'].values
-   
+    
+    spacing = float(grid_size/2)
     # Create a grid of points for the heatmap
-    xii = np.arange(x.min(), x.max(), 1)   #Adjust spacing to more than 1 m if necessary
-    yii = np.arange(y.min(), y.max(), 1)
+    xii = np.arange(x.min(), x.max(),spacing)   #Adjust spacing to more than 1 m if necessary
+    yii = np.arange(y.min(), y.max(), spacing)
     xi, yi =np.meshgrid(xii, yii)
    
     # Flatten the grid to pass it to the IDW function
@@ -301,7 +323,8 @@ def generate_idw_heatmap(df_data, bound, grid_size, heatmap_output_path, shapefi
     # Reshape the interpolated values back to the grid shape
     grid_z = interpolated_values.reshape(xi.shape)
     
-   
+    grid_z = np.clip(grid_z, 0, 80) #Clip to make 80 the maximum
+    
     grid_z = gaussian_filter(grid_z, sigma=sigma)
    
     mask = np.array([boundary_polygon.contains(Point(px, py)) for px, py in zip(xi_flat, yi_flat)])
@@ -318,11 +341,12 @@ def generate_idw_heatmap(df_data, bound, grid_size, heatmap_output_path, shapefi
     # Use imshow to display the heatmap with the correct extent
     plt.imshow(grid_z, cmap=cmap, origin='lower', extent=extent, aspect='auto')
     
-    plt.colorbar(label='IDW Interpolated Values')
-    plt.title('IDW Heatmap of Values')
+    plt.colorbar(label='Farmi™ score')
+    plt.title('Heatmap of Values')
     plt.xlabel('UTM X Coordinate')
     plt.ylabel('UTM Y Coordinate')
-    plt.tight_layout()
+    plt.gca().set_aspect('equal', adjustable='box')
+    
     
 
     # Save the heatmap
@@ -338,3 +362,104 @@ def generate_idw_heatmap(df_data, bound, grid_size, heatmap_output_path, shapefi
     
     # Save the interpolated data to a shapefile (optional)
     save_heatmap_to_shapefile(pd.DataFrame({'x': xi_flat, 'y': yi_flat, 'values': interpolated_values}), shapefile_output_path, crs)
+    
+    
+    
+    
+def generate_idw_heatmap2(df_data, bound, grid_size, heatmap_output_path, shapefile_output_path, crs, sigma=1, power=2):
+
+    x = df_data['x'].values
+    y = df_data['y'].values
+    values = df_data['values'].values
+   
+    spacing = float(grid_size/3)
+    
+    # Create a grid of points for the heatmap
+    xii = np.arange(x.min(), x.max(), spacing)   #Adjust spacing to more than 1 m if necessary
+    yii = np.arange(y.min(), y.max(), spacing)
+    xi, yi =np.meshgrid(xii, yii)
+   
+    # Flatten the grid to pass it to the IDW function
+    xi_flat = xi.ravel()
+    yi_flat = yi.ravel()
+    
+    # Apply IDW interpolation with chunking
+    interpolated_values = inverse_distance_weighting(x, y, values, xi_flat, yi_flat, power=power)
+    
+    # Create a Polygon from boundary_coords_utm
+    boundary_polygon = Polygon(bound)
+    
+    # Reshape the interpolated values back to the grid shape
+    grid_z = interpolated_values.reshape(xi.shape)
+    
+    grid_z[grid_z == 0] = np.nan
+    grid_z = np.clip(grid_z, 0, 80) #Clip to make 80 the maximum
+    
+    grid_z = gaussian_filter(grid_z, sigma=sigma)
+   
+    mask = np.array([boundary_polygon.contains(Point(px, py)) for px, py in zip(xi_flat, yi_flat)])
+    mask = mask.reshape(xi.shape)
+
+    # Apply the mask to set values outside the boundary to NaN
+    grid_z[~mask] = np.nan
+    
+    extent = [xii.min(), xii.max(), yii.min(), yii.max()]
+    # Create and save the heatmap
+    plt.figure(figsize=(12, 10))
+    cmap = sns.color_palette("RdYlGn", as_cmap=True)
+    
+    # Use imshow to display the heatmap with the correct extent
+    plt.imshow(grid_z, cmap=cmap, origin='lower', extent=extent, aspect='auto')
+    
+    plt.colorbar(label='Farmi™ score')
+    plt.title('Heatmap of Values')
+    plt.xlabel('UTM X Coordinate')
+    plt.ylabel('UTM Y Coordinate')
+    plt.gca().set_aspect('equal', adjustable='box')
+    #plt.tight_layout()
+    
+
+    # Save the heatmap
+    plt.savefig(heatmap_output_path)
+    save_directory = "/home/dataplicity/remote/"
+    if not os.path.exists(save_directory):
+        os.makedirs(save_directory)
+    # Ensure the heatmap_output_path does not start with /tmp/
+    heatmap_output_path = heatmap_output_path.lstrip("/tmp/")
+    plt.savefig("/home/nicolaiaustad/Desktop/CropCounter/generated_heatmaps/NaN"+heatmap_output_path, bbox_inches='tight')
+    plt.close()
+    logging.info(f"Heatmap saved to {heatmap_output_path}")
+    
+    # Save the interpolated data to a shapefile (optional)
+    save_heatmap_to_shapefile(pd.DataFrame({'x': xi_flat, 'y': yi_flat, 'values': interpolated_values}), shapefile_output_path, crs)
+    
+    
+def plot_measured_points(df_data, name):
+    # Create a pivot table for 'measured' values (True = 1, False = 0)
+    pivot_table_measured = df_data.pivot(index='y', columns='x', values='measured')
+    # Ensure that the pivot table has no multi-index and is a regular 2D table
+    if isinstance(pivot_table_measured.columns, pd.MultiIndex):
+        pivot_table_measured.columns = pivot_table_measured.columns.droplevel(0)
+    if isinstance(pivot_table_measured.index, pd.MultiIndex):
+        pivot_table_measured.index = pivot_table_measured.index.droplevel(0)
+    # Create a mask for NaN values
+    mask = pivot_table_measured.isna()
+ 
+    # Replace NaN values with False (or 0)
+    pivot_table_measured = pivot_table_measured.fillna(False)
+    # Convert boolean to integer (True -> 1, False -> 0)
+    measured_grid = pivot_table_measured.astype(int).values
+  
+    assert mask.shape == measured_grid.shape
+    # Plot the binary map
+    plt.figure(figsize=(12, 10))
+    sns.heatmap(measured_grid, cmap=sns.color_palette("coolwarm", as_cmap=True), annot=False, cbar=False, xticklabels=False, yticklabels=False, mask=mask.values)
+    plt.gca().invert_yaxis()
+    plt.gca().set_aspect('equal', adjustable='box')
+    plt.title('Binary Map of Measured Points')
+    plt.xlabel('UTM X Coordinate')
+    plt.ylabel('UTM Y Coordinate')
+    plt.savefig(f"/home/nicolaiaustad/Desktop/CropCounter/generated_heatmaps/binary_map_{name}.png", bbox_inches='tight')
+    plt.close()
+    logging.info(f"Binary map saved...")
+    

@@ -152,14 +152,15 @@ def main():
     
     total_images_processed = 0
     processing_start_time = time.time()
-    speed_store = deque(maxlen=5)
-    
+    speed_store = deque(maxlen=4)
+    speed_store.extend([100] * 4)
     # Load the YOLO model
     
-    ncnn_model = YOLO("best_ncnn_model", task="detect")
+    ncnn_model = YOLO("best60_ncnn_model_1600", task="detect")
    
     try:
         counter = 0
+        saver = 0
         logging.info('Now the While loop starts...')
         while True:
             start_time = time.time()
@@ -199,12 +200,22 @@ def main():
                 logging.error(f"Error processing image with timestamp {timestamp}: {e}")
             
             
-            if max(speed_store) < 0.5:
+            if (max(speed_store) < 1) and (saver > 10):
+                print("Speed_store: ")
+                print(speed_store) 
                 try:
-                    maps.make_heatmap_and_save(df_utm, grid_size, f'/tmp/{job_name}_{counter}.png', f'/tmp/{job_name}_{counter}', utm_crs)
+                    maps.make_heatmap_and_save(df_utm, grid_size, f'/tmp/{job_name}_custom_{counter}.png', f'/tmp/{job_name}_custom_{counter}', utm_crs)
+                    #maps.generate_idw_heatmap(df_utm, bound, grid_size, f'/tmp/{job_name}_idw_{counter}.png', f'/tmp/{job_name}_idw_{counter}', utm_crs)
+                    #maps.generate_idw_heatmap2(df_utm, bound, grid_size, f'/tmp/{job_name}_idw_NAN_{counter}.png', f'/tmp/{job_name}_idw_NAN_{counter}', utm_crs) 
+                    
+                    saver = 0
+                    
                 except Exception as e:
                     logging.error(f"Error saving heatmap checkpoint: {e}")
-                    
+            else:
+                saver +=1
+                print("Speed_store: ")
+                print(speed_store)     
           
             # Update counter and timing
             counter += 1
@@ -218,8 +229,8 @@ def main():
                 images_per_second = total_images_processed / elapsed_time
                 logging.info(f"Total processed images: {total_images_processed:.2f}, in Time: {elapsed_time:.2f}")
             
-            # Maintain a 2.5-second loop cycle
-            time.sleep(max(0, 2.5 - iteration_time))
+            # Maintain a 1-second loop cycle
+            time.sleep(max(0, 1 - iteration_time))
             
     except KeyboardInterrupt:
         print("Program interrupted")
@@ -236,9 +247,11 @@ def main():
         
 
         try:
-            maps.make_heatmap_and_save(df_utm, grid_size, f'/tmp/{job_name}_custom.png', f'/tmp/{job_name}_custom', utm_crs) #Creates custom smoothed heatmap
+            maps.make_heatmap_and_save(df_utm, bound, grid_size, f'/tmp/{job_name}_custom.png', f'/tmp/{job_name}_custom', utm_crs) #Creates custom smoothed heatmap
             maps.generate_idw_heatmap(df_utm, bound, grid_size, f'/tmp/{job_name}_idw.png', f'/tmp/{job_name}_idw', utm_crs) #Creates IDW heatmap
-            
+            maps.generate_idw_heatmap2(df_utm, bound, grid_size, f'/tmp/{job_name}_idw_NAN_3spacing.png', f'/tmp/{job_name}_idw_NAN_3spacing', utm_crs) #Creates IDW heatmap 2 with nans
+            maps.plot_measured_points(df_utm, "Flaget3_measuredPlot_Torsdag")
+                
             heatmap_folder = os.path.join(mount_point, 'generated_heatmaps')
             generated_shapefiles_folder = os.path.join(mount_point, 'generated_shapefiles')
             os.makedirs(heatmap_folder, exist_ok=True)
