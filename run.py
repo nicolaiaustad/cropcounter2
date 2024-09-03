@@ -146,8 +146,6 @@ def main():
     zone_number, hemisphere = maps.get_utm_zone(init_lon, init_lat)
     utm_crs = maps.create_utm_proj(zone_number, hemisphere)
     
-    pool = Pool(processes=1)  # Use the specified number of CPU cores
-    results = []
     image_metadata = {}  # Dictionary to store image metadata
     
     total_images_processed = 0
@@ -179,32 +177,37 @@ def main():
                     df_row = maps.find_grid_cell(utm_x, utm_y, grid_size, df_utm)
                     
                     if df_row is not None:
-                        if counter % 5 == 0:
-                            logging.info("Good signal. Satellite: "+str(satellites)+" Latitude: " + str(latitude)+ ", Longitude: " + str(longitude))
+                        #if counter % 5 == 0:
+                        logging.info("Good signal. Satellite: "+str(satellites)+" Latitude: " + str(latitude)+ ", Longitude: " + str(longitude))
                         
                         if df_utm.at[df_row, "measured"] == False:
                             df_utm.at[df_row, "measured"] = True
                             df_utm.at[df_row, "values"] = int(value)
                         elif df_utm.at[df_row, "measured"] == True:
+                            logging.info("Already measured this square!")
                             continue
                         else:
                             continue
                     else:
-                        if counter % 5 == 0:
-                            logging.info("GPS coordinate outside grid. Satellite: "+str(satellites)+" Latitude: " + str(latitude)+ ", Longitude: " + str(longitude))
+                        #if counter % 5 == 0:
+                        logging.info("GPS coordinate outside grid. Satellite: "+str(satellites)+" Latitude: " + str(latitude)+ ", Longitude: " + str(longitude))
                     
                     total_images_processed += 1
+                else:
+                    logging.info("Value was none")
+                    
                 del image_metadata[timestamp]
                 
             except Exception as e:
                 logging.error(f"Error processing image with timestamp {timestamp}: {e}")
             
             
+            
             if (max(speed_store) < 1) and (saver > 10):
-                print("Speed_store: ")
-                print(speed_store) 
+                logging.info("Speed_store: "+str(speed_store))
+                
                 try:
-                    maps.make_heatmap_and_save(df_utm, grid_size, f'/tmp/{job_name}_custom_{counter}.png', f'/tmp/{job_name}_custom_{counter}', utm_crs)
+                    maps.make_heatmap_and_save(df_utm, bound, grid_size, f'/tmp/{job_name}_custom_{counter}.png', f'/tmp/{job_name}_custom_{counter}', utm_crs)
                     #maps.generate_idw_heatmap(df_utm, bound, grid_size, f'/tmp/{job_name}_idw_{counter}.png', f'/tmp/{job_name}_idw_{counter}', utm_crs)
                     #maps.generate_idw_heatmap2(df_utm, bound, grid_size, f'/tmp/{job_name}_idw_NAN_{counter}.png', f'/tmp/{job_name}_idw_NAN_{counter}', utm_crs) 
                     
@@ -214,8 +217,7 @@ def main():
                     logging.error(f"Error saving heatmap checkpoint: {e}")
             else:
                 saver +=1
-                print("Speed_store: ")
-                print(speed_store)     
+                logging.info("Speed_store: "+str(speed_store)) 
           
             # Update counter and timing
             counter += 1
@@ -230,8 +232,8 @@ def main():
                 logging.info(f"Total processed images: {total_images_processed:.2f}, in Time: {elapsed_time:.2f}")
             
             # Maintain a 1-second loop cycle
-            time.sleep(max(0, 1 - iteration_time))
-            
+            time.sleep(max(0, 3 - iteration_time))
+            logging.info("Iteration time: "+str(iteration_time))
     except KeyboardInterrupt:
         print("Program interrupted")
         logging.info("Program interrupted")
@@ -241,16 +243,13 @@ def main():
             picam2.stop()
         except Exception as e:
             logging.error(f"Error stopping camera: {e}")
-       
-        logging.info("Camera stopped and resources cleaned up")
         logging.info("Cleaning up resources...")
         
-
         try:
             maps.make_heatmap_and_save(df_utm, bound, grid_size, f'/tmp/{job_name}_custom.png', f'/tmp/{job_name}_custom', utm_crs) #Creates custom smoothed heatmap
             maps.generate_idw_heatmap(df_utm, bound, grid_size, f'/tmp/{job_name}_idw.png', f'/tmp/{job_name}_idw', utm_crs) #Creates IDW heatmap
             maps.generate_idw_heatmap2(df_utm, bound, grid_size, f'/tmp/{job_name}_idw_NAN_3spacing.png', f'/tmp/{job_name}_idw_NAN_3spacing', utm_crs) #Creates IDW heatmap 2 with nans
-            maps.plot_measured_points(df_utm, "Flaget3_measuredPlot_Torsdag")
+            maps.plot_measured_points(df_utm, f"plot_{job_name}.png")
                 
             heatmap_folder = os.path.join(mount_point, 'generated_heatmaps')
             generated_shapefiles_folder = os.path.join(mount_point, 'generated_shapefiles')

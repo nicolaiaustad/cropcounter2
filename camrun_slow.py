@@ -19,7 +19,7 @@ camera_config = picam2.create_still_configuration(
     },
     controls={
         "AnalogueGain": 3,
-        "ExposureTime": 1000,
+        "ExposureTime": 750,
         "Brightness": 0.0,
         "Contrast": 1,
         "Saturation": 1,
@@ -47,8 +47,8 @@ try:
     counter = 0
     while counter < 10:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        image_path = os.path.join(image_dir, f"training_slow1000_{timestamp}.png")
-        image_path2 = os.path.join(image_dir, f"training_slow1000_{timestamp}.jpeg")
+        image_path = os.path.join(image_dir, f"atraining_slow1000_{timestamp}.png")
+        image_path2 = os.path.join(image_dir, f"atraining_slow1000_{timestamp}.jpeg")
         
         # Capture the image
         picam2.capture_file(image_path)

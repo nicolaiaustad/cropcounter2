@@ -35,15 +35,16 @@ model_1920 = YOLO("best60_ncnn_model_1920", task="detect")
 model_2464 = YOLO("best60_ncnn_model_2464", task="detect")
 model_1600 = YOLO("best60_ncnn_model_1600", task="detect")
 
-img_path = "test_pred"
-import os
-for file in os.listdir(img_path):
-    file = os.path.join(img_path, file)
-    #result = model.predict(file, imgsz=2464, conf=0.40)
-    result_1600 = model_1600.predict(file, imgsz=1600, conf=0.40)
-    result_1920 = model_1920.predict(file, imgsz=1920, conf=0.40)
-    result_2464 = model_2464.predict(file, imgsz=2464, conf=0.40)
+# img_path = "test_pred"
+# import os
+# for file in os.listdir(img_path):
+#     file = os.path.join(img_path, file)
+#     #result = model.predict(file, imgsz=2464, conf=0.40)
+#     result_1600 = model_1600.predict(file, imgsz=1600, conf=0.40)
+#     result_1920 = model_1920.predict(file, imgsz=1920, conf=0.40)
+#     result_2464 = model_2464.predict(file, imgsz=2464, conf=0.40)
 
+result_1600 = model_1600.predict("/home/nicolaiaustad/Desktop/CropCounter/captured_images/dtraining_20240903_071543.jpeg", imgsz=1600, conf=0.40)
 # from PIL import Image
 # import matplotlib.pyplot as plt
 # import os

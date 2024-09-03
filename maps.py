@@ -245,13 +245,13 @@ def make_heatmap_and_save(df_data, boundary_coords_utm, grid_size, heatmap_outpu
     aspect_ratio = (unique_x.max() - unique_x.min()) / (unique_y.max() - unique_y.min())
     ax.set_aspect(aspect_ratio)
 
-    sns.heatmap(smoothed_grid, cmap=cmap, annot=False, fmt="f", cbar=True, xticklabels=False, yticklabels=False, ax=ax,cbar_kws={'label': 'Farmi™ score'})
+    sns.heatmap(smoothed_grid, cmap=cmap, annot=False, fmt="f", cbar=True, xticklabels=False, yticklabels=False, ax=ax,cbar_kws={'label': 'Monivera™ score'})
     plt.gca().invert_yaxis()
     
     ax.plot(boundary_coords_utm[:, 0], boundary_coords_utm[:, 1], 'r-', linewidth=2, label='Boundary')
     
     
-    plt.title('Heatmap of Values')
+    plt.title('Crop Density Distribution')
     plt.xlabel('UTM X Coordinate')
     plt.ylabel('UTM Y Coordinate')
     # Overlay the boundary to ensure alignment
@@ -341,8 +341,8 @@ def generate_idw_heatmap(df_data, bound, grid_size, heatmap_output_path, shapefi
     # Use imshow to display the heatmap with the correct extent
     plt.imshow(grid_z, cmap=cmap, origin='lower', extent=extent, aspect='auto')
     
-    plt.colorbar(label='Farmi™ score')
-    plt.title('Heatmap of Values')
+    plt.colorbar(label='Monivera™ score')
+    plt.title('Crop Density Distribution')
     plt.xlabel('UTM X Coordinate')
     plt.ylabel('UTM Y Coordinate')
     plt.gca().set_aspect('equal', adjustable='box')
@@ -411,8 +411,8 @@ def generate_idw_heatmap2(df_data, bound, grid_size, heatmap_output_path, shapef
     # Use imshow to display the heatmap with the correct extent
     plt.imshow(grid_z, cmap=cmap, origin='lower', extent=extent, aspect='auto')
     
-    plt.colorbar(label='Farmi™ score')
-    plt.title('Heatmap of Values')
+    plt.colorbar(label='Monivera™ score')
+    plt.title('Crop Density Distribution')
     plt.xlabel('UTM X Coordinate')
     plt.ylabel('UTM Y Coordinate')
     plt.gca().set_aspect('equal', adjustable='box')
