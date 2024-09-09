@@ -170,7 +170,7 @@ def save_heatmap_to_shapefile(df_data, output_path, crs):
 import numpy as np
 from scipy.ndimage import gaussian_filter
 
-def custom_interpolation(pivot_table, grid_size, sigma=1, min_value=0, max_value=80):
+def custom_interpolation(pivot_table, grid_size, sigma=3, min_value=0, max_value=80):
     grid_z = pivot_table.values
     
     # Step 1: Set up a custom function for interpolation
@@ -298,7 +298,7 @@ def inverse_distance_weighting(x, y, values, xi, yi, power=2):
     return interpolated_values
     
 
-def generate_idw_heatmap(df_data, bound, grid_size, heatmap_output_path, shapefile_output_path, crs, sigma=1, power=2):
+def generate_idw_heatmap(df_data, bound, grid_size, heatmap_output_path, shapefile_output_path, crs, sigma=3, power=2):
 
     x = df_data['x'].values
     y = df_data['y'].values
@@ -366,7 +366,7 @@ def generate_idw_heatmap(df_data, bound, grid_size, heatmap_output_path, shapefi
     
     
     
-def generate_idw_heatmap2(df_data, bound, grid_size, heatmap_output_path, shapefile_output_path, crs, sigma=1, power=2):
+def generate_idw_heatmap2(df_data, bound, grid_size, heatmap_output_path, shapefile_output_path, crs, sigma=3, power=2):
 
     x = df_data['x'].values
     y = df_data['y'].values

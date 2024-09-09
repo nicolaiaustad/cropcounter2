@@ -47,8 +47,8 @@ try:
     counter = 0
     while counter < 5:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        image_path = os.path.join(image_dir, f"dtraining_{timestamp}.png")
-        image_path2 = os.path.join(image_dir, f"dtraining_{timestamp}.jpeg")
+        image_path = os.path.join(image_dir, f"etraining_{timestamp}.png")
+        image_path2 = os.path.join(image_dir, f"etraining_{timestamp}.jpeg")
         
         # Measure time before capturing
         start_time = time.time()

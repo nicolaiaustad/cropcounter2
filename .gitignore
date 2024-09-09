@@ -15,3 +15,5 @@ myenv/
 ncnn/*
 
 test.py
+
+test_pred/
